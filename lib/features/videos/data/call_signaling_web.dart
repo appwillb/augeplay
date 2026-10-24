@@ -30,6 +30,12 @@ class CallSignalingPlatform {
     } catch (_) {}
   }
 
+  static void makeMediaCall(String targetUserId) {
+    try {
+      js.context['playaugeCallService']?.callMethod('makeMediaCall', [targetUserId]);
+    } catch (_) {}
+  }
+
   static void registerCallbacks({
     required Function(Map<String, dynamic> caller) onIncomingCall,
     required VoidCallback onCallAnswered,

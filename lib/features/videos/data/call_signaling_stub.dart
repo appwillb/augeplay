@@ -6,6 +6,7 @@ class CallSignalingPlatform {
   static void callUser(String targetUserId, Map<String, dynamic> callerData) {}
   static void answerCall(String targetUserId) {}
   static void endCall(String targetUserId) {}
+  static void makeMediaCall(String targetUserId) {}
   static void registerCallbacks({
     required Function(Map<String, dynamic> caller) onIncomingCall,
     required VoidCallback onCallAnswered,

@@ -41,4 +41,8 @@ Widget createVideoPlayerView({
   );
 }
 
+Widget createRemoteStreamView({required String viewId}) {
+  return const SizedBox();
+}
+
 void disposeWebMedia() {}

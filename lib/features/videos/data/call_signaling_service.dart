@@ -70,4 +70,8 @@ class CallSignalingService extends ChangeNotifier {
     _incomingCallData = null;
     notifyListeners();
   }
+
+  void startMediaStream(String targetUserId) {
+    CallSignalingPlatform.makeMediaCall(targetUserId);
+  }
 }

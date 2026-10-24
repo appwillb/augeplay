@@ -43,6 +43,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     _currentProposedCache = widget.proposedCache ?? widget.targetProfile.availability.baseRate ?? 800.0;
     _startTimer();
     CallSignalingService().addListener(_onSignalingStateChanged);
+    CallSignalingService().startMediaStream(widget.targetProfile.user.id);
   }
 
   void _onSignalingStateChanged() {
@@ -145,43 +146,118 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     );
   }
 
+  Widget _buildAvatarFallback(UserEntity u) {
+    return Container(
+      color: AppColors.surface,
+      child: Center(
+        child: Text(
+          u.displayName.isNotEmpty ? u.displayName[0].toUpperCase() : 'M',
+          style: const TextStyle(fontSize: 44, fontWeight: FontWeight.bold, color: AppColors.primary),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final targetUser = widget.targetProfile.user;
-    final auditionVideoUrl = widget.targetProfile.videoUrls.isNotEmpty
-        ? widget.targetProfile.videoUrls.first
-        : 'https://assets.mixkit.co/videos/preview/mixkit-guitarist-playing-an-acoustic-guitar-42526-large.mp4';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0B0F19),
       body: Stack(
         children: [
-          // 1. Câmera Remota (Músico Tocando ao Vivo na Audição)
+          // 1. Palco Principal: Câmera Remota WebRTC & Visualizador de Audição ao Vivo
           Positioned.fill(
             child: Container(
-              color: const Color(0xFF14171F),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF0F172A), Color(0xFF0B0F19)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (_showPerformanceVideo)
-                    createVideoPlayerView(
-                      viewId: 'remote_audition_${targetUser.id}',
-                      videoUrl: auditionVideoUrl,
-                      isPlaying: true,
-                      isMuted: _isMuted,
-                    )
-                  else if (targetUser.avatarUrl != null && targetUser.avatarUrl!.isNotEmpty)
-                    Image.network(
-                      targetUser.avatarUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Center(
-                        child: Icon(Icons.person, size: 100, color: Colors.white24),
-                      ),
-                    )
-                  else
-                    const Center(
-                      child: Icon(Icons.person, size: 100, color: Colors.white24),
+                  // Vídeo Remoto da Câmera do outro usuário via WebRTC
+                  createRemoteStreamView(viewId: targetUser.id),
+
+                  // Palco Central de Audição ao Vivo (Visualizador moderno que nunca fica escuro)
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Avatar Grande com Borda Brilhante
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primary, width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.35),
+                                blurRadius: 28,
+                                spreadRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: targetUser.avatarUrl != null && targetUser.avatarUrl!.isNotEmpty
+                                ? Image.network(
+                                    targetUser.avatarUrl!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => _buildAvatarFallback(targetUser),
+                                  )
+                                : _buildAvatarFallback(targetUser),
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        Text(
+                          targetUser.displayName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${targetUser.roles.isNotEmpty ? targetUser.roles.first.label : 'Músico'} • ${targetUser.city} - ${targetUser.state}',
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Distintivo de Conexão Ativa
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0xFF10B981), width: 1),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.fiber_manual_record_rounded, color: Color(0xFF10B981), size: 12),
+                              SizedBox(width: 6),
+                              Text(
+                                'Audição ao Vivo Conectada',
+                                style: TextStyle(
+                                  color: Color(0xFF10B981),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
 
                   // Overlay superior
                   Positioned(
@@ -205,7 +281,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Text('AUDIÇÃO AO VIVO', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                          const Text('AO VIVO', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                           const SizedBox(width: 8),
                           Text(_formatDuration(_callDurationSeconds), style: const TextStyle(color: Colors.white70, fontSize: 11)),
                         ],
@@ -222,10 +298,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             top: 50,
             right: 20,
             child: Container(
-              width: 120,
-              height: 170,
+              width: 125,
+              height: 175,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: const Color(0xFF1E222D),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppColors.primary, width: 2),
                 boxShadow: [

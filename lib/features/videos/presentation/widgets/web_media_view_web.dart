@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'dart:js' as js;
 import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 
@@ -103,6 +104,37 @@ Widget createVideoPlayerView({
     } else if (!isPlaying && !el.paused) {
       el.pause();
     }
+  }
+
+  return HtmlElementView(viewType: uniqueId);
+}
+
+Widget createRemoteStreamView({required String viewId}) {
+  final uniqueId = 'remote_stream_$viewId';
+
+  if (!_registeredViews.contains(uniqueId)) {
+    _registeredViews.add(uniqueId);
+    // ignore: undefined_prefixed_name
+    ui_web.platformViewRegistry.registerViewFactory(uniqueId, (int id) {
+      final video = html.VideoElement()
+        ..id = 'playauge_remote_video'
+        ..autoplay = true
+        ..setAttribute('playsinline', 'true')
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..style.objectFit = 'cover'
+        ..style.backgroundColor = 'transparent';
+
+      try {
+        final jsService = js.context['playaugeCallService'];
+        if (jsService != null && jsService['remoteStream'] != null) {
+          video.srcObject = jsService['remoteStream'];
+          video.play().catchError((_) {});
+        }
+      } catch (_) {}
+
+      return video;
+    });
   }
 
   return HtmlElementView(viewType: uniqueId);

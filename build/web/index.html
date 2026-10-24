@@ -104,6 +104,17 @@
                   self.handleMessage(data);
                 });
               });
+              self.peer.on('call', function(incomingCall) {
+                console.log('[PlayAuge WebRTC] Chamada de mídia recebida:', incomingCall);
+                self.startLocalMedia(function(stream) {
+                  if (stream) incomingCall.answer(stream);
+                  incomingCall.on('stream', function(remoteStream) {
+                    console.log('[PlayAuge WebRTC] Stream remoto recebido no answer!');
+                    self.remoteStream = remoteStream;
+                    self.attachRemoteStream(remoteStream);
+                  });
+                });
+              });
               self.peer.on('error', function(err) {
                 console.warn('[PlayAuge WebRTC] Peer status:', err);
               });
@@ -117,6 +128,63 @@
         if (!self.peer) {
           setTimeout(connectPeer, 1500);
         }
+      },
+      localStream: null,
+      remoteStream: null,
+      startLocalMedia: function(cb) {
+        var self = this;
+        if (this.localStream) {
+          if (cb) cb(this.localStream);
+          return;
+        }
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+            audio: true
+          }).then(function(stream) {
+            self.localStream = stream;
+            if (cb) cb(stream);
+          }).catch(function() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(vStream) {
+              self.localStream = vStream;
+              if (cb) cb(vStream);
+            }).catch(function() {
+              if (cb) cb(null);
+            });
+          });
+        } else {
+          if (cb) cb(null);
+        }
+      },
+      attachRemoteStream: function(stream) {
+        var el = document.getElementById('playauge_remote_video');
+        if (el && stream) {
+          try {
+            el.srcObject = stream;
+            el.play().catch(function(){});
+          } catch(e) {}
+        }
+      },
+      makeMediaCall: function(targetUserId) {
+        var cleanTarget = 'playauge_' + String(targetUserId).replace(/[^a-zA-Z0-9_]/g, '_');
+        var self = this;
+        this.startLocalMedia(function(stream) {
+          if (self.peer && stream) {
+            try {
+              console.log('[PlayAuge WebRTC] Iniciando chamada de mídia P2P com:', cleanTarget);
+              var mediaCall = self.peer.call(cleanTarget, stream);
+              if (mediaCall) {
+                mediaCall.on('stream', function(remoteStream) {
+                  console.log('[PlayAuge WebRTC] Stream remoto recebido no caller!');
+                  self.remoteStream = remoteStream;
+                  self.attachRemoteStream(remoteStream);
+                });
+              }
+            } catch(e) {
+              console.warn('[PlayAuge WebRTC] makeMediaCall error:', e);
+            }
+          }
+        });
       },
       callUser: function(targetUserId, callerData) {
         var cleanTarget = 'playauge_' + String(targetUserId).replace(/[^a-zA-Z0-9_]/g, '_');
@@ -234,6 +302,6 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js?v=20261024_06" async></script>
+  <script src="flutter_bootstrap.js?v=20261024_07" async></script>
 </body>
 </html>
