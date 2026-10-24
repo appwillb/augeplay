@@ -1,23 +1,37 @@
 import 'package:playauge/core/constants/mock_data.dart';
 import 'package:playauge/core/errors/failures.dart';
+import 'package:playauge/core/storage/local_storage_service.dart';
 import 'package:playauge/features/auth/domain/models/user_entity.dart';
 import 'package:playauge/features/auth/domain/models/user_role.dart';
 import 'package:playauge/features/auth/domain/repositories/auth_repository.dart';
 
 /// Implementação do Repositório de Autenticação
-/// Suporta desenvolvimento local/demo e conexão com backend real
+/// Com persistência automática em LocalStorage (sessão mantida após F5 / restart)
 class AuthRepositoryImpl implements AuthRepository {
-  UserEntity? _currentUser = MockData.joaoSilva; // Usuário logado por padrão na sessão demo
+  UserEntity? _currentUser;
+
+  AuthRepositoryImpl() {
+    final savedAuth = LocalStorageService.loadAuthStatus();
+    final savedUser = LocalStorageService.loadCurrentUser();
+
+    if (savedAuth == false) {
+      _currentUser = null;
+    } else if (savedUser != null) {
+      _currentUser = savedUser;
+    } else {
+      _currentUser = MockData.joaoSilva;
+      LocalStorageService.saveCurrentUser(_currentUser);
+    }
+  }
 
   @override
   Future<UserEntity> login(String email, String password) async {
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     if (password.length < 6) {
       throw const AuthFailure('A senha deve conter pelo menos 6 caracteres.');
     }
 
-    // Busca usuário demo ou cria sessão
     final found = MockData.allUsers.firstWhere(
       (u) => u.email.toLowerCase() == email.trim().toLowerCase(),
       orElse: () => UserEntity(
@@ -33,6 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     _currentUser = found;
+    LocalStorageService.saveCurrentUser(found);
     return found;
   }
 
@@ -47,7 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String bio,
     required List<UserRole> roles,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     final newUser = UserEntity(
       id: 'user_${DateTime.now().millisecondsSinceEpoch}',
@@ -61,18 +76,20 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     _currentUser = newUser;
+    LocalStorageService.saveCurrentUser(newUser);
     return newUser;
   }
 
   @override
   Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 100));
     _currentUser = null;
+    LocalStorageService.saveCurrentUser(null);
   }
 
   @override
   Future<void> sendPasswordReset(String email) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 200));
   }
 
   @override
@@ -83,6 +100,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> updateCurrentUser(UserEntity user) async {
     _currentUser = user;
+    LocalStorageService.saveCurrentUser(user);
     return user;
   }
 }

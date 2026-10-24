@@ -1,4 +1,5 @@
 import 'package:playauge/core/constants/mock_data.dart';
+import 'package:playauge/core/storage/local_storage_service.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/profile/domain/models/availability_entity.dart';
 
@@ -10,7 +11,16 @@ abstract class ProfileRepository {
 }
 
 class ProfileRepositoryImpl implements ProfileRepository {
-  final List<ProfileEntity> _profiles = List.from(MockData.profiles);
+  late final List<ProfileEntity> _profiles;
+
+  ProfileRepositoryImpl() {
+    final saved = LocalStorageService.loadProfiles();
+    if (saved != null && saved.isNotEmpty) {
+      _profiles = List.from(saved);
+    } else {
+      _profiles = List.from(MockData.profiles);
+    }
+  }
 
   @override
   Future<List<ProfileEntity>> getAllProfiles() async {
@@ -27,6 +37,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       try {
         final mock = MockData.profiles.firstWhere((p) => p.user.id == userId);
         _profiles.add(mock);
+        LocalStorageService.saveProfiles(_profiles);
         return mock;
       } catch (_) {
         return null;
@@ -41,6 +52,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     if (index != -1) {
       final updated = _profiles[index].copyWith(availability: availability);
       _profiles[index] = updated;
+      LocalStorageService.saveProfiles(_profiles);
       return updated;
     }
     final fallback = MockData.profiles.firstWhere(
@@ -54,6 +66,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     );
     final updated = fallback.copyWith(availability: availability);
     _profiles.add(updated);
+    LocalStorageService.saveProfiles(_profiles);
     return updated;
   }
 
@@ -63,10 +76,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final index = _profiles.indexWhere((p) => p.user.id == profile.user.id);
     if (index != -1) {
       _profiles[index] = profile;
-      return profile;
     } else {
       _profiles.add(profile);
-      return profile;
     }
+    LocalStorageService.saveProfiles(_profiles);
+    return profile;
   }
 }

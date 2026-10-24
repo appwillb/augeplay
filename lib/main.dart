@@ -76,6 +76,7 @@ class _PlayAugeAppState extends State<PlayAugeApp> {
     _videoProvider = VideoProvider(_videoRepository);
 
     // Sincroniza estado de autenticação para Login / Logout automático
+    _isLoggedIn = _authProvider.isAuthenticated;
     _authProvider.addListener(_handleAuthChange);
 
     // Carrega convites para o usuário ativo
