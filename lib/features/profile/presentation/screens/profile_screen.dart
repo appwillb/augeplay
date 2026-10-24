@@ -306,9 +306,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               Row(
                 children: [
                   Expanded(
-                    flex: 3,
                     child: AppButton(
-                      label: 'Convidar p/ Show',
+                      label: 'Convidar Show',
                       icon: Icons.calendar_today_rounded,
                       onPressed: widget.onInviteForGig,
                     ),
@@ -316,18 +315,21 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   const SizedBox(width: 8),
                   // Botão de Vídeo Chamada / Audição Online
                   Expanded(
-                    flex: 3,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF10B981),
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      icon: const Icon(Icons.videocam_rounded, size: 20),
-                      label: const Text(
-                        'Audição Vídeo',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      icon: const Icon(Icons.videocam_rounded, size: 18),
+                      label: const Flexible(
+                        child: Text(
+                          'Audição Vídeo',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       onPressed: _startVideoCall,
                     ),
