@@ -73,6 +73,11 @@ class HomeDashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.search_rounded),
             onPressed: () => onNavigateTab(1), // Aba Descobrir
           ),
+          IconButton(
+            icon: const Icon(Icons.account_circle_rounded, color: AppColors.primary),
+            tooltip: 'Meu Perfil',
+            onPressed: () => onNavigateTab(4), // Aba Perfil
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -80,17 +85,36 @@ class HomeDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header de Boas-vindas
+            // Header de Boas-vindas com botão direto de Perfil
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text('Olá, $userName 👋', style: AppTextStyles.displayMedium),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Encontre músicos e faça sua música acontecer em qualquer lugar.',
-                    style: AppTextStyles.bodyMedium,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Olá, $userName 👋', style: AppTextStyles.displayMedium),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Encontre músicos e faça sua música acontecer em qualquer lugar.',
+                          style: AppTextStyles.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.surfaceElevated,
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.person_rounded, size: 18),
+                    label: const Text('Meu Perfil', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    onPressed: () => onNavigateTab(4),
                   ),
                 ],
               ),
