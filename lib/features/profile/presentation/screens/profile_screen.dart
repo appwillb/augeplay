@@ -57,6 +57,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   @override
+  void didUpdateWidget(ProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.profile.user.id != widget.profile.user.id) {
+      widget.profileProvider.selectProfile(widget.profile);
+      widget.videoProvider.loadVideosForMusician(widget.profile.user.id);
+    }
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();

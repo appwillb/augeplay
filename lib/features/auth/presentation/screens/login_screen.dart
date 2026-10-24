@@ -23,8 +23,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'joao.silva@playauge.demo');
-  final _passwordController = TextEditingController(text: '123456');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
@@ -32,6 +32,19 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _loginAsDemoUser(String email, String label) {
+    _emailController.text = email;
+    _passwordController.text = '123456';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColors.primary,
+        duration: const Duration(milliseconds: 900),
+        content: Text('Entrando como $label...'),
+      ),
+    );
+    _submit();
   }
 
   Future<void> _submit() async {
@@ -151,26 +164,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     runSpacing: 8,
                     children: [
                       ActionChip(
-                        avatar: const Icon(Icons.music_note, size: 16, color: AppColors.primary),
-                        label: const Text('João Silva (Músico)', style: TextStyle(fontSize: 12)),
+                        avatar: const Icon(Icons.mic_external_on_rounded, size: 16, color: AppColors.primary),
+                        label: const Text('João Silva (Cantor)', style: TextStyle(fontSize: 12)),
                         backgroundColor: AppColors.surfaceElevated,
                         side: const BorderSide(color: AppColors.surfaceBorder),
-                        onPressed: () {
-                          _emailController.text = 'joao.silva@playauge.demo';
-                          _passwordController.text = '123456';
-                          _submit();
-                        },
+                        onPressed: () => _loginAsDemoUser('joao.silva@playauge.demo', 'João Silva (Cantor)'),
                       ),
                       ActionChip(
-                        avatar: const Icon(Icons.event_available, size: 16, color: AppColors.availableGreen),
-                        label: const Text('Pedro Santos (Contratante)', style: TextStyle(fontSize: 12)),
+                        avatar: const Icon(Icons.music_note_rounded, size: 16, color: Color(0xFF10B981)),
+                        label: const Text('Pedro Guitar (Guitarrista)', style: TextStyle(fontSize: 12)),
                         backgroundColor: AppColors.surfaceElevated,
                         side: const BorderSide(color: AppColors.surfaceBorder),
-                        onPressed: () {
-                          _emailController.text = 'pedro.santos@playauge.demo';
-                          _passwordController.text = '123456';
-                          _submit();
-                        },
+                        onPressed: () => _loginAsDemoUser('pedro.santos@playauge.demo', 'Pedro Guitar (Guitarrista)'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.album_rounded, size: 16, color: Colors.orangeAccent),
+                        label: const Text('Marcos Batera (Baterista)', style: TextStyle(fontSize: 12)),
+                        backgroundColor: AppColors.surfaceElevated,
+                        side: const BorderSide(color: AppColors.surfaceBorder),
+                        onPressed: () => _loginAsDemoUser('marcos.batera@playauge.demo', 'Marcos Batera (Baterista)'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.edit_note_rounded, size: 16, color: Colors.purpleAccent),
+                        label: const Text('Ana Martins (Compositora)', style: TextStyle(fontSize: 12)),
+                        backgroundColor: AppColors.surfaceElevated,
+                        side: const BorderSide(color: AppColors.surfaceBorder),
+                        onPressed: () => _loginAsDemoUser('ana.martins@playauge.demo', 'Ana Martins (Compositora)'),
                       ),
                     ],
                   ),

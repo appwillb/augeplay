@@ -265,6 +265,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         currentUserName: currentUser.displayName,
       ),
       ProfileScreen(
+        key: ValueKey('my_profile_${currentUser.id}'),
         profile: myProfile,
         profileProvider: widget.profileProvider,
         videoProvider: widget.videoProvider,

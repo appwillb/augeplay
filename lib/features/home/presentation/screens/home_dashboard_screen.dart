@@ -95,7 +95,20 @@ class HomeDashboardScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Olá, $userName 👋', style: AppTextStyles.displayMedium),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                          ),
+                          child: Text(
+                            'Sessão ativa: $userName (${user?.roles.map((r) => r.shortLabel).join(", ") ?? "Músico"})',
+                            style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
                         Text(
                           'Encontre músicos e faça sua música acontecer em qualquer lugar.',
                           style: AppTextStyles.bodyMedium,
