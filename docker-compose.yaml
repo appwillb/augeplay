@@ -18,6 +18,9 @@ services:
         condition: service_healthy
     labels:
       - "coolify.managed=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.playauge-web.entrypoints=http,https"
+      - "traefik.http.services.playauge-web.loadbalancer.server.port=80"
 
   # 2. Banco de Dados PostgreSQL Automático
   postgres:
