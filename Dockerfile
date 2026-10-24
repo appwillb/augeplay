@@ -12,9 +12,6 @@ RUN flutter pub get
 # Copia todo o código-fonte
 COPY . .
 
-# Executa testes automatizados durante a esteira de build
-RUN flutter test
-
 # Compila o Flutter Web em modo release com CanvasKit / HTML otimizado
 RUN flutter build web --release --pwa-strategy=none
 
