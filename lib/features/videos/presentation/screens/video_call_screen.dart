@@ -6,6 +6,7 @@ import 'package:playauge/core/utils/currency_formatter.dart';
 import 'package:playauge/features/auth/domain/models/user_entity.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/videos/presentation/widgets/web_media_view.dart';
+import 'package:playauge/features/videos/data/call_signaling_service.dart';
 
 /// Tela de Chamada de Vídeo para Audição Online e Negociação Direta de Cachê
 class VideoCallScreen extends StatefulWidget {
@@ -41,6 +42,19 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     super.initState();
     _currentProposedCache = widget.proposedCache ?? widget.targetProfile.availability.baseRate ?? 800.0;
     _startTimer();
+    CallSignalingService().addListener(_onSignalingStateChanged);
+  }
+
+  void _onSignalingStateChanged() {
+    // Escuta eventos de encerramento remoto
+  }
+
+  void _endCall() {
+    CallSignalingService().endCall(widget.targetProfile.user.id);
+    disposeWebMedia();
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void _startTimer() {
@@ -55,6 +69,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   void dispose() {
+    CallSignalingService().removeListener(_onSignalingStateChanged);
     _callTimer?.cancel();
     disposeWebMedia();
     super.dispose();
@@ -354,10 +369,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     FloatingActionButton(
                       heroTag: 'end_call_btn',
                       backgroundColor: Colors.redAccent,
-                      onPressed: () {
-                        disposeWebMedia();
-                        Navigator.pop(context);
-                      },
+                      onPressed: _endCall,
                       child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 28),
                     ),
                   ],

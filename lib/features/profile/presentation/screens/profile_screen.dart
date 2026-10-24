@@ -9,6 +9,7 @@ import 'package:playauge/features/profile/presentation/state/profile_provider.da
 import 'package:playauge/features/videos/presentation/state/video_provider.dart';
 import 'package:playauge/features/videos/presentation/widgets/musician_videos_grid.dart';
 import 'package:playauge/features/videos/presentation/screens/video_call_screen.dart';
+import 'package:playauge/features/videos/data/call_signaling_service.dart';
 import 'package:playauge/shared/widgets/app_button.dart';
 import 'package:playauge/shared/widgets/user_avatar.dart';
 import 'package:playauge/shared/widgets/availability_badge.dart';
@@ -72,6 +73,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   void _startVideoCall(ProfileEntity profile) {
+    CallSignalingService().startCall(
+      callerUser: widget.currentUser,
+      targetProfile: profile,
+      cacheAmount: profile.availability.baseRate ?? 800.0,
+    );
+
     Navigator.push(
       context,
       MaterialPageRoute(

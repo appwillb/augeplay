@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="/">
 
   <meta charset="UTF-8">
@@ -45,8 +32,10 @@
     }
   </style>
 
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
   <script>
-    // Limpa service workers antigos e cache local para carregar sempre a versão mais recente
+    // Limpa service workers antigos e cache local
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function(registrations) {
         for(var i = 0; i < registrations.length; i++) {
@@ -61,12 +50,147 @@
         }
       });
     }
+
+    // Serviço de Sinalização WebRTC e Chamadas em Tempo Real
+    window.playaugeCallService = {
+      peer: null,
+      currentUserId: null,
+      init: function(userId) {
+        if (!userId) return;
+        this.currentUserId = String(userId);
+        var cleanId = 'playauge_' + String(userId).replace(/[^a-zA-Z0-9_]/g, '_');
+        var self = this;
+        
+        function connectPeer() {
+          if (typeof Peer !== 'undefined') {
+            try {
+              if (self.peer) self.peer.destroy();
+              self.peer = new Peer(cleanId);
+              self.peer.on('open', function(id) {
+                console.log('[PlayAuge WebRTC] Peer pronto para chamadas:', id);
+              });
+              self.peer.on('connection', function(conn) {
+                conn.on('data', function(data) {
+                  console.log('[PlayAuge WebRTC] Mensagem recebida via Peer:', data);
+                  self.handleMessage(data);
+                });
+              });
+              self.peer.on('error', function(err) {
+                console.warn('[PlayAuge WebRTC] Peer status:', err);
+              });
+            } catch(e) {
+              console.warn('[PlayAuge WebRTC] Init error:', e);
+            }
+          }
+        }
+        
+        connectPeer();
+        if (!self.peer) {
+          setTimeout(connectPeer, 1500);
+        }
+      },
+      callUser: function(targetUserId, callerData) {
+        var cleanTarget = 'playauge_' + String(targetUserId).replace(/[^a-zA-Z0-9_]/g, '_');
+        var parsedCaller = typeof callerData === 'string' ? JSON.parse(callerData) : callerData;
+        var payload = {
+          type: 'INCOMING_CALL',
+          caller: parsedCaller,
+          targetUserId: String(targetUserId),
+          timestamp: Date.now()
+        };
+        console.log('[PlayAuge Call] Chamando usuário:', targetUserId, payload);
+
+        // 1. BroadcastChannel (mesmo navegador / abas)
+        if (window.BroadcastChannel) {
+          try { 
+            var bc = new BroadcastChannel('playauge_call_channel');
+            bc.postMessage(payload);
+          } catch(e) {}
+        }
+        // 2. localStorage (outras abas / persistente)
+        try { 
+          localStorage.setItem('playauge_call_event', JSON.stringify(payload)); 
+        } catch(e) {}
+        // 3. PeerJS (computador para celular / internet)
+        if (this.peer) {
+          try {
+            var conn = this.peer.connect(cleanTarget);
+            conn.on('open', function() {
+              conn.send(payload);
+            });
+          } catch(e) {}
+        }
+      },
+      answerCall: function(targetUserId) {
+        var payload = { type: 'CALL_ANSWERED', targetUserId: String(targetUserId), timestamp: Date.now() };
+        if (window.BroadcastChannel) {
+          try { new BroadcastChannel('playauge_call_channel').postMessage(payload); } catch(e) {}
+        }
+        try { localStorage.setItem('playauge_call_event', JSON.stringify(payload)); } catch(e) {}
+        if (this.peer) {
+          try {
+            var cleanTarget = 'playauge_' + String(targetUserId).replace(/[^a-zA-Z0-9_]/g, '_');
+            var conn = this.peer.connect(cleanTarget);
+            conn.on('open', function() { conn.send(payload); });
+          } catch(e) {}
+        }
+      },
+      endCall: function(targetUserId) {
+        var payload = { type: 'CALL_ENDED', targetUserId: String(targetUserId), timestamp: Date.now() };
+        if (window.BroadcastChannel) {
+          try { new BroadcastChannel('playauge_call_channel').postMessage(payload); } catch(e) {}
+        }
+        try { localStorage.setItem('playauge_call_event', JSON.stringify(payload)); } catch(e) {}
+        if (this.peer) {
+          try {
+            var cleanTarget = 'playauge_' + String(targetUserId).replace(/[^a-zA-Z0-9_]/g, '_');
+            var conn = this.peer.connect(cleanTarget);
+            conn.on('open', function() { conn.send(payload); });
+          } catch(e) {}
+        }
+      },
+      handleMessage: function(data) {
+        if (!data) return;
+        console.log('[PlayAuge Call] handleMessage:', data, 'meu ID atual:', this.currentUserId);
+        if (data.type === 'INCOMING_CALL' && String(data.targetUserId) === String(this.currentUserId)) {
+          if (window.onPlayaugeIncomingCall) {
+            window.onPlayaugeIncomingCall(typeof data.caller === 'string' ? data.caller : JSON.stringify(data.caller));
+          }
+        } else if (data.type === 'CALL_ANSWERED') {
+          if (window.onPlayaugeCallAnswered) {
+            window.onPlayaugeCallAnswered();
+          }
+        } else if (data.type === 'CALL_ENDED') {
+          if (window.onPlayaugeCallEnded) {
+            window.onPlayaugeCallEnded();
+          }
+        }
+      }
+    };
+
+    if (window.BroadcastChannel) {
+      try {
+        var bc = new BroadcastChannel('playauge_call_channel');
+        bc.onmessage = function(ev) {
+          window.playaugeCallService.handleMessage(ev.data);
+        };
+      } catch(e) {}
+    }
+
+    window.addEventListener('storage', function(ev) {
+      if (ev.key === 'playauge_call_event' && ev.newValue) {
+        try {
+          var data = JSON.parse(ev.newValue);
+          window.playaugeCallService.handleMessage(data);
+        } catch(e) {}
+      }
+    });
   </script>
 
   <title>playauge</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js?v=20261024_01" async></script>
+  <script src="flutter_bootstrap.js?v=20261024_04" async></script>
 </body>
 </html>

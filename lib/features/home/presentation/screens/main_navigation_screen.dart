@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:playauge/core/audio/audio_player_service.dart';
 import 'package:playauge/core/constants/mock_data.dart';
 import 'package:playauge/core/theme/app_colors.dart';
+import 'package:playauge/core/utils/currency_formatter.dart';
+import 'package:playauge/features/auth/domain/models/user_entity.dart';
+import 'package:playauge/features/auth/domain/models/user_role.dart';
 import 'package:playauge/features/auth/presentation/state/auth_provider.dart';
 import 'package:playauge/features/discovery/presentation/state/discovery_provider.dart';
 import 'package:playauge/features/opportunities/presentation/state/opportunity_provider.dart';
@@ -11,6 +14,8 @@ import 'package:playauge/features/profile/presentation/state/profile_provider.da
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/contracts/presentation/state/contract_provider.dart';
 import 'package:playauge/features/videos/presentation/state/video_provider.dart';
+import 'package:playauge/features/videos/presentation/screens/video_call_screen.dart';
+import 'package:playauge/features/videos/data/call_signaling_service.dart';
 import 'package:playauge/features/rehearsals/data/repositories/rehearsal_repository.dart';
 import 'package:playauge/features/chat/data/repositories/chat_repository.dart';
 import 'package:playauge/features/home/presentation/screens/home_dashboard_screen.dart';
@@ -58,20 +63,224 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
+  bool _isIncomingCallModalOpen = false;
 
   @override
   void initState() {
     super.initState();
     widget.authProvider.addListener(_onStateChanged);
     widget.profileProvider.addListener(_onStateChanged);
+
+    final currentUser = widget.authProvider.currentUser ?? MockData.joaoSilva;
+    CallSignalingService().init(currentUser.id);
+    CallSignalingService().addListener(_onCallSignalingChanged);
   }
 
   void _onStateChanged() {
+    final currentU = widget.authProvider.currentUser;
+    if (currentU != null) {
+      CallSignalingService().init(currentU.id);
+    }
     if (mounted) setState(() {});
+  }
+
+  void _onCallSignalingChanged() {
+    if (!mounted) return;
+    if (CallSignalingService().hasIncomingCall && !_isIncomingCallModalOpen) {
+      _isIncomingCallModalOpen = true;
+      _showIncomingCallDialog(CallSignalingService().incomingCallData!);
+    } else if (!CallSignalingService().hasIncomingCall && _isIncomingCallModalOpen) {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+      _isIncomingCallModalOpen = false;
+    }
+  }
+
+  void _showIncomingCallDialog(Map<String, dynamic> callerData) {
+    final callerName = callerData['callerName'] as String? ?? 'Produtor / Músico';
+    final callerAvatar = callerData['callerAvatar'] as String? ?? '';
+    final callerCity = callerData['callerCity'] as String? ?? 'Brasil';
+    final cacheAmount = (callerData['cacheAmount'] as num?)?.toDouble() ?? 800.0;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        return PopScope(
+          canPop: false,
+          child: Dialog(
+            backgroundColor: AppColors.surfaceElevated,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: AppColors.primary, width: 2),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.ring_volume_rounded,
+                      color: AppColors.primary,
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Chamada de Audição de Vídeo!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$callerName está te ligando para audição ao vivo',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  CircleAvatar(
+                    radius: 38,
+                    backgroundColor: AppColors.surface,
+                    backgroundImage: callerAvatar.isNotEmpty ? NetworkImage(callerAvatar) : null,
+                    child: callerAvatar.isEmpty
+                        ? Text(
+                            callerName.isNotEmpty ? callerName[0] : 'U',
+                            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primary),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    callerCity,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.monetization_on_rounded, color: AppColors.primary, size: 18),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Cachê Proposto: ${CurrencyFormatter.formatBRL(cacheAmount)}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.redAccent,
+                            side: const BorderSide(color: Colors.redAccent),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          icon: const Icon(Icons.call_end_rounded, size: 18),
+                          label: const Text('Recusar', style: TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            _isIncomingCallModalOpen = false;
+                            Navigator.pop(dialogCtx);
+                            CallSignalingService().rejectIncomingCall();
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          icon: const Icon(Icons.call_rounded, size: 18),
+                          label: const Text('Atender', style: TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            _isIncomingCallModalOpen = false;
+                            Navigator.pop(dialogCtx);
+                            CallSignalingService().acceptIncomingCall();
+
+                            final currentU = widget.authProvider.currentUser ?? MockData.pedroSantos;
+                            final callerId = callerData['callerId'] as String? ?? '1';
+                            final callerUser = MockData.allUsers.firstWhere(
+                              (u) => u.id == callerId,
+                              orElse: () => UserEntity(
+                                id: callerId,
+                                name: callerName,
+                                stageName: callerName,
+                                email: '$callerId@playauge.demo',
+                                roles: const [UserRole.produtor],
+                                bio: 'Produtor Musical / Artista no PlayAuge',
+                                city: callerCity.split(' - ').first,
+                                state: callerCity.contains(' - ') ? callerCity.split(' - ').last : 'SP',
+                                avatarUrl: callerAvatar,
+                              ),
+                            );
+
+                            final myProfile = widget.profileProvider.getProfile(currentU.id) ??
+                                MockData.profiles.firstWhere(
+                                  (p) => p.user.id == currentU.id,
+                                  orElse: () => MockData.profiles[1],
+                                );
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => VideoCallScreen(
+                                  callerUser: callerUser,
+                                  targetProfile: myProfile,
+                                  proposedCache: cacheAmount,
+                                  onContractAgreed: () {},
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ).then((_) {
+      _isIncomingCallModalOpen = false;
+    });
   }
 
   @override
   void dispose() {
+    CallSignalingService().removeListener(_onCallSignalingChanged);
     widget.authProvider.removeListener(_onStateChanged);
     widget.profileProvider.removeListener(_onStateChanged);
     super.dispose();
