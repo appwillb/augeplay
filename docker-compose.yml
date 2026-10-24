@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 1. Aplicação Web PlayAuge / GPSMusic (Frontend Nginx)
+  playauge-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: playauge-web:latest
+    container_name: playauge_app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-playauge_user}:${POSTGRES_PASSWORD:-playauge_pass}@postgres:5432/${POSTGRES_DB:-playauge_db}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - "coolify.managed=true"
+
+  # 2. Banco de Dados PostgreSQL Automático
+  postgres:
+    image: postgres:15-alpine
+    container_name: playauge_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-playauge_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-playauge_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-playauge_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-playauge_user} -d ${POSTGRES_DB:-playauge_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,1121 @@
+# PROJETO: REDE SOCIAL PROFISSIONAL PARA MÚSICOS, ARTISTAS E COMPOSITORES
+
+Crie um aplicativo mobile profissional utilizando Flutter, com arquitetura escalável e código organizado para produção.
+
+O aplicativo será uma plataforma social e profissional voltada para o mercado musical.
+
+A ideia NÃO é criar apenas um player de música ou uma rede social tradicional.
+
+O objetivo principal é conectar:
+- Artistas
+- Cantores
+- Músicos
+- Bandas
+- Compositores
+- Produtores musicais
+- Técnicos
+- Profissionais do mercado musical
+
+O grande diferencial será permitir que um artista que vai realizar um show em outra cidade ou estado consiga encontrar profissionais disponíveis naquela região, entrar em contato, negociar, contratar e organizar ensaios.
+
+Ao mesmo tempo, músicos e compositores poderão divulgar seu trabalho, publicar músicas, composições, vídeos, fotos e encontrar oportunidades profissionais.
+
+---
+
+# 1. CONCEITO PRINCIPAL
+
+O aplicativo deve funcionar como uma combinação de:
+- Rede social musical
+- Marketplace de profissionais da música
+- Plataforma de oportunidades
+- Portfólio profissional
+- Plataforma de divulgação de músicas e composições
+- Sistema de contratação
+- Sistema de organização de shows e ensaios
+
+Conceito central:
+
+> "Encontre músicos, encontre oportunidades e faça sua música acontecer em qualquer lugar."
+
+---
+
+# 2. TECNOLOGIA
+
+Desenvolver em:
+- Flutter
+- Dart
+- Android
+- iOS
+
+Preparar arquitetura para futura versão Web/Desktop, mas o foco inicial é mobile.
+
+Utilizar arquitetura limpa e modular:
+- Clean Architecture
+- Repository Pattern
+- Dependency Injection
+- State Management moderno
+- Modelos separados da apresentação
+- Serviços separados
+- Componentes reutilizáveis
+
+Não criar código monolítico.
+
+---
+
+# 3. USUÁRIOS
+
+Durante o cadastro o usuário poderá escolher um ou mais perfis:
+
+ARTISTA
+- Cantor
+- Dupla
+- Banda
+- DJ
+- etc.
+
+MÚSICO
+- Guitarrista
+- Violonista
+- Baterista
+- Baixista
+- Tecladista
+- Percussionista
+- Saxofonista
+- Trompetista
+- Sanfoneiro
+- Violoncelista
+- Outros
+
+COMPOSITOR
+- Pessoa que cria músicas e pode divulgar suas composições.
+
+PRODUTOR
+- Produtor musical ou profissional relacionado à produção.
+
+PROFISSIONAL
+- Outras funções relacionadas ao mercado musical.
+
+Um usuário poderá possuir mais de uma função.
+
+---
+
+# 4. CADASTRO E LOGIN
+
+Criar:
+- Cadastro
+- Login
+- Recuperação de senha
+- Login social preparado para futura implementação
+- E-mail
+- Senha
+- Nome
+- Nome artístico
+- Foto
+- Cidade
+- Estado
+- País
+- Biografia
+- Tipo de perfil
+
+Durante o cadastro solicitar autorização para:
+- Localização
+- Notificações
+- Microfone quando necessário
+- Galeria quando necessário
+
+Nunca solicitar permissões sem contexto.
+
+---
+
+# 5. PERFIL PROFISSIONAL
+
+Cada usuário terá um perfil profissional.
+
+Exemplo:
+
+## João Silva
+Cantor
+Goiânia - GO
+
+Sertanejo | Pop | Acústico
+
+Bio:
+"Atuo profissionalmente há 10 anos..."
+
+Mostrar:
+- Foto
+- Nome artístico
+- Cidade
+- Estado
+- Biografia
+- Funções
+- Instrumentos
+- Gêneros musicais
+- Experiência
+- Fotos
+- Vídeos
+- Músicas
+- Composições
+- Seguidores
+- Seguindo
+- Avaliações
+- Agenda
+- Disponibilidade profissional
+
+Botões:
+- CONTATAR
+- SEGUIR
+- CONVIDAR PARA TRABALHO
+
+---
+
+# 6. DISPONIBILIDADE PROFISSIONAL
+
+Esse é um dos recursos mais importantes.
+
+O músico poderá informar:
+🟢 DISPONÍVEL PARA TRABALHO
+ou
+⚪ INDISPONÍVEL
+
+Também poderá cadastrar períodos de disponibilidade.
+
+Exemplo:
+20/10/2026 — Disponível
+21/10/2026 — Disponível
+22/10/2026 — Indisponível
+
+Permitir configurar:
+- Cidade
+- Raio de atendimento
+- Estados onde aceita trabalhar
+- Disponibilidade
+- Cachê inicial
+- Tipo de trabalho
+
+---
+
+# 7. BUSCAR MÚSICOS
+
+Criar busca eficiente.
+
+O usuário poderá procurar:
+"Baterista"
+
+E filtrar:
+- Cidade
+- Data
+- Estilo musical
+- Faixa de cachê
+- Somente disponíveis
+- Avaliação
+
+Exemplo:
+
+## Bateristas disponíveis em São Paulo
+
+Pedro Santos
+Baterista
+São Paulo - SP
+Sertanejo | Pop
+🟢 Disponível
+⭐ 4.9
+
+Ações:
+- Ver perfil
+- Contatar
+- Convidar para trabalho
+
+---
+
+# 8. BUSCA POR LOCALIZAÇÃO
+
+Utilizar localização do usuário quando autorizado.
+
+Permitir pesquisar profissionais:
+- Próximos
+- Na cidade
+- No estado
+- Em outra cidade
+- Em outro estado
+
+Exemplo:
+"Vou fazer um show em São Paulo."
+
+Selecionar:
+São Paulo - SP
+20/10/2026
+Guitarrista
+
+Mostrar profissionais daquela região.
+
+Não depender somente da localização atual do aparelho. O usuário deve poder pesquisar qualquer cidade manualmente.
+
+---
+
+# 9. OPORTUNIDADES
+
+Criar área:
+
+# OPORTUNIDADES
+
+Usuários poderão publicar oportunidades profissionais.
+
+Exemplo:
+
+### PROCURA-SE BATERISTA
+São Paulo - SP
+20/10/2026
+Sertanejo
+Cachê: R$ 600
+
+Descrição:
+"Artista procura baterista para apresentação."
+
+Botão:
+### TENHO INTERESSE
+
+O criador recebe uma notificação.
+
+---
+
+# 10. TIPOS DE OPORTUNIDADES
+
+Permitir:
+- Procuro músico
+- Procuro cantor
+- Procuro compositor
+- Procuro produtor
+- Procuro banda
+- Procuro técnico
+- Procuro parceiro
+- Procuro estúdio
+- Procuro profissional
+- Parceria musical
+- Gravação
+- Show
+- Turnê
+- Ensaio
+- Projeto musical
+
+---
+
+# 11. CONTRATAÇÃO
+
+Criar fluxo de contratação.
+
+Exemplo:
+Artista: "Convidar músico"
+
+Selecionar:
+- Data
+- Horário
+- Local
+- Evento
+- Valor do cachê
+- Observações
+
+Enviar convite.
+
+O músico recebe:
+"João Silva convidou você para um show."
+
+Opções:
+- ACEITAR
+- RECUSAR
+- NEGOCIAR
+
+---
+
+# 12. ENSAIOS
+
+Criar módulo:
+
+# MEUS ENSAIOS
+
+Criar ensaio:
+
+Ensaio — Show São Paulo
+18/10/2026
+19:00
+Estúdio XYZ
+
+Participantes:
+- João
+- Pedro
+- Marcos
+- Carlos
+
+Permitir:
+- Convidar músicos
+- Confirmar presença
+- Conversar no grupo
+- Anexar repertório
+- Compartilhar músicas
+- Compartilhar letras
+- Compartilhar arquivos
+- Adicionar observações
+
+---
+
+# 13. REPERTÓRIO
+
+Criar sistema de repertório.
+
+Exemplo:
+
+### Repertório Show São Paulo
+
+1. Música A
+2. Música B
+3. Música C
+4. Música D
+
+Cada música pode conter:
+- Áudio
+- Letra
+- Tom
+- BPM
+- Observações
+- Link
+- Arquivo
+
+Músicos convidados podem acessar.
+
+---
+
+# 14. MÚSICAS
+
+Criar:
+
+# MINHAS MÚSICAS
+
+Cada música:
+- Capa
+- Título
+- Artista
+- Compositor
+- Gênero
+- Áudio
+- Letra
+- Tom
+- BPM
+- Descrição
+- Data
+- Tags
+
+Permitir upload:
+- MP3
+- WAV
+- M4A
+
+Preparar arquitetura para cloud storage.
+
+Não armazenar arquivos grandes diretamente no banco.
+
+---
+
+# 15. COMPOSIÇÕES
+
+Criar:
+
+# MINHAS COMPOSIÇÕES
+
+O compositor poderá cadastrar:
+- Nome da música
+- Áudio/demo
+- Letra
+- Gênero
+- Tom
+- BPM
+- Autores
+- Data
+- Descrição
+
+Visibilidade:
+🔒 Privada
+👥 Seguidores
+🌎 Pública
+
+Também poderá marcar:
+- PROCURA-SE ARTISTA
+- PROCURA-SE PRODUTOR
+- PROCURA-SE PARCERIA
+
+---
+
+# 16. FEED
+
+Criar feed social moderno.
+
+Publicações:
+- Texto
+- Foto
+- Vídeo
+- Música
+- Composição
+- Divulgação de show
+- Oportunidade
+- Ensaio
+- Projeto
+
+Cada publicação:
+❤️ Curtir
+💬 Comentar
+🔄 Compartilhar
+🔖 Salvar
+➕ Seguir
+
+Priorizar conteúdo relacionado ao usuário, localização e interesses musicais.
+
+---
+
+# 17. PLAYER DE MÚSICA
+
+Criar player global.
+
+Funções:
+- Play
+- Pause
+- Próxima
+- Anterior
+
+Mostrar:
+- Capa
+- Nome
+- Artista
+- Barra de progresso
+
+O player deve continuar funcionando durante a navegação.
+
+Criar mini-player fixo.
+
+---
+
+# 18. PLAYLISTS
+
+Permitir:
+- Criar playlist
+- Adicionar músicas
+- Remover músicas
+- Reordenar músicas
+- Tornar pública ou privada
+- Compartilhar playlist
+
+---
+
+# 19. SEGUIDORES
+
+Criar:
+- Seguir usuário
+- Deixar de seguir
+- Seguidores
+- Seguindo
+
+---
+
+# 20. CHAT
+
+Criar sistema de mensagens.
+
+Permitir:
+- Conversa individual
+- Grupo
+- Texto
+- Áudio
+- Compartilhar música
+- Compartilhar oportunidade
+- Compartilhar perfil
+- Compartilhar localização
+- Arquivos
+
+Preparar mensagens em tempo real.
+
+---
+
+# 21. NOTIFICAÇÕES
+
+Criar central de notificações.
+
+Tipos:
+- Novo seguidor
+- Curtida
+- Comentário
+- Mensagem
+- Convite para show
+- Convite para ensaio
+- Interesse em oportunidade
+- Convite aceito
+- Convite recusado
+- Nova oportunidade próxima
+- Nova mensagem
+- Atualização de contratação
+
+---
+
+# 22. AVALIAÇÕES
+
+Depois de um trabalho concluído, permitir avaliação.
+
+Exemplo:
+⭐⭐⭐⭐⭐
+
+"Excelente músico, pontual e profissional."
+
+Categorias:
+- Profissionalismo
+- Pontualidade
+- Qualidade musical
+- Comunicação
+
+Mostrar média no perfil.
+
+Evitar avaliações antes de uma interação profissional real.
+
+---
+
+# 23. AGENDA
+
+Criar calendário profissional.
+
+Mostrar:
+- Shows
+- Ensaios
+- Trabalhos
+- Convites
+- Disponibilidade
+
+Status:
+🟢 Disponível
+🔴 Ocupado
+🟡 A confirmar
+
+---
+
+# 24. MAPA
+
+Criar área de mapa.
+
+Mostrar profissionais disponíveis próximos à região pesquisada.
+
+Exemplo:
+São Paulo
+35 guitarristas
+18 bateristas
+12 tecladistas
+
+Ao tocar no profissional, abrir mini perfil.
+
+---
+
+# 25. FILTROS
+
+Filtros:
+- Profissão
+- Instrumento
+- Cidade
+- Estado
+- Distância
+- Gênero musical
+- Disponibilidade
+- Cachê
+- Avaliação
+- Experiência
+
+---
+
+# 26. PERFIL DA BANDA
+
+Permitir criar perfil de banda.
+
+Exemplo:
+
+## Banda X
+Goiânia - GO
+Sertanejo
+
+Integrantes:
+- Vocal
+- Guitarra
+- Bateria
+- Teclado
+
+A banda terá:
+- Fotos
+- Vídeos
+- Músicas
+- Agenda
+- Biografia
+- Integrantes
+- Contato
+- Seguidores
+
+---
+
+# 27. DESIGN
+
+O aplicativo precisa parecer produto profissional.
+
+Características:
+- Moderno
+- Elegante
+- Musical
+- Profissional
+- Simples
+- Rápido
+- Responsivo
+
+Criar identidade visual própria.
+
+Usar:
+- Cards modernos
+- Fotos grandes
+- Capas de músicas
+- Player elegante
+- Ícones consistentes
+- Tipografia moderna
+- Espaçamento adequado
+- Navegação simples
+
+Evitar excesso de elementos.
+
+---
+
+# 28. NAVEGAÇÃO PRINCIPAL
+
+Bottom Navigation:
+
+🏠 Início
+Feed e recomendações.
+
+🔎 Descobrir
+Encontrar músicos, artistas, músicas e oportunidades.
+
+➕ Publicar
+Criar publicação, música ou oportunidade.
+
+💬 Mensagens
+Conversas.
+
+👤 Perfil
+Perfil profissional.
+
+---
+
+# 29. TELA INICIAL
+
+Mostrar:
+
+"Olá, João 👋"
+
+"Encontre músicos e oportunidades."
+
+Cards:
+- 🎸 Músicos próximos
+- 🎯 Oportunidades para você
+- 🎵 Novas músicas
+- 📅 Seus próximos trabalhos
+- 📍 Profissionais disponíveis perto de você
+
+---
+
+# 30. DESCOBRIR
+
+Abas:
+- Pessoas
+- Músicas
+- Oportunidades
+- Bandas
+- Composições
+- Eventos
+
+Usar busca inteligente.
+
+---
+
+# 31. PUBLICAÇÃO
+
+Botão "+" central.
+
+Opções:
+- 🎵 Música
+- 📝 Composição
+- 📸 Foto
+- 🎬 Vídeo
+- 🎯 Oportunidade
+- 🎤 Show
+- 📅 Ensaio
+
+---
+
+# 32. SEGURANÇA
+
+Implementar:
+- Autenticação segura
+- Controle de acesso
+- Validação de dados
+- Proteção de endpoints
+- Upload seguro
+- Limites de tamanho
+- Tratamento de erros
+- Rate limiting preparado
+- Denúncia
+- Bloqueio
+
+Ações:
+- DENUNCIAR
+- BLOQUEAR
+
+---
+
+# 33. MODERAÇÃO
+
+Criar estrutura administrativa.
+
+Administrador poderá:
+- Ver usuários
+- Bloquear usuários
+- Remover conteúdo
+- Ver denúncias
+- Gerenciar categorias
+- Gerenciar oportunidades
+- Gerenciar gêneros
+- Gerenciar instrumentos
+
+---
+
+# 34. BACKEND
+
+Não deixar o aplicativo dependente de dados mockados.
+
+Preparar backend real com:
+- Usuários
+- Perfis
+- Músicos
+- Artistas
+- Compositores
+- Músicas
+- Composições
+- Posts
+- Comentários
+- Curtidas
+- Seguidores
+- Oportunidades
+- Contratações
+- Ensaios
+- Repertórios
+- Playlists
+- Mensagens
+- Notificações
+- Avaliações
+- Agenda
+- Localização
+
+Usar banco relacional.
+
+PostgreSQL recomendado.
+
+---
+
+# 35. STORAGE
+
+Arquivos de mídia não devem ficar diretamente no PostgreSQL.
+
+Preparar integração com:
+- S3
+- Cloudflare R2
+- Supabase Storage
+- Serviço compatível com S3
+
+Arquivos:
+- Fotos
+- Capas
+- Áudios
+- Vídeos
+- PDFs
+- Letras
+- Documentos
+
+---
+
+# 36. ÁUDIO
+
+Criar serviço separado para:
+- Upload
+- Processamento
+- Streaming
+- Controle de acesso
+- URLs temporárias
+- Metadados
+- Capa
+- Duração
+- Waveform futuramente
+
+---
+
+# 37. LOCALIZAÇÃO
+
+Armazenar:
+- Cidade
+- Estado
+- País
+- Latitude
+- Longitude
+
+Não exibir localização residencial precisa.
+
+Mostrar apenas localização profissional aproximada, como cidade/região.
+
+---
+
+# 38. PRIVACIDADE
+
+Usuário controla:
+- Quem pode ver músicas
+- Quem pode enviar mensagens
+- Quem pode ver disponibilidade
+- Quem pode ver agenda
+- Quem pode ver perfil
+- Quem pode comentar
+
+---
+
+# 39. MONETIZAÇÃO FUTURA
+
+Não implementar pagamento inicialmente, mas deixar arquitetura preparada para:
+- Assinatura Premium
+- Destaque de perfil
+- Destaque de oportunidade
+- Anúncios
+- Comissão sobre contratação
+- Recursos profissionais
+- Armazenamento adicional
+
+Não criar cobrança real no MVP.
+
+---
+
+# 40. MVP
+
+Priorizar:
+
+1. Cadastro/login
+2. Perfil profissional
+3. Busca de músicos
+4. Busca por cidade
+5. Disponibilidade
+6. Publicação de músicas
+7. Composições
+8. Feed
+9. Seguidores
+10. Oportunidades
+11. Convites
+12. Chat
+13. Notificações
+14. Agenda
+15. Player de áudio
+
+Depois evoluir para:
+- Pagamentos
+- Contratos
+- Avaliações avançadas
+- Marketplace
+- Streaming avançado
+- Recomendação por IA
+- Eventos
+- Integração com mapas
+- Integração com calendário
+- Sistema de turnês
+
+---
+
+# 41. DADOS DE TESTE
+
+Criar dados fictícios para demonstração:
+
+João Silva — Cantor
+Pedro Santos — Guitarrista
+Marcos Oliveira — Baterista
+Carlos Souza — Tecladista
+Ana Martins — Compositora
+Banda Horizonte
+
+Criar músicas, oportunidades e publicações fictícias.
+
+Separar claramente:
+DEMO DATA
+de
+REAL DATA.
+
+---
+
+# 42. EXPERIÊNCIA DO USUÁRIO
+
+Regra principal:
+
+### O usuário precisa conseguir encontrar um músico em poucos segundos.
+
+Fluxo:
+
+1. Abrir aplicativo
+2. "Encontrar músico"
+3. Escolher instrumento
+4. Escolher cidade
+5. Escolher data
+6. Ver profissionais disponíveis
+7. Abrir perfil
+8. Ver vídeos/áudios
+9. Entrar em contato
+10. Enviar convite
+
+---
+
+# 43. FLUXO DO COMPOSITOR
+
+1. Criar composição
+2. Upload da demo
+3. Adicionar letra
+4. Adicionar gênero
+5. Publicar
+6. Outros usuários escutam
+7. Artista demonstra interesse
+8. Iniciam conversa
+9. Criam parceria
+
+---
+
+# 44. FLUXO DO ARTISTA VIAJANDO
+
+1. Abrir aplicativo
+2. Escolher cidade do show
+3. Selecionar data
+4. Procurar músicos
+5. Filtrar instrumento
+6. Filtrar disponibilidade
+7. Visualizar perfil
+8. Convidar
+9. Criar grupo do show
+10. Criar ensaio
+11. Compartilhar repertório
+12. Realizar apresentação
+
+---
+
+# 45. REQUISITOS IMPORTANTES
+
+Não criar telas falsas sem funcionalidade.
+
+Não criar botões que não fazem nada.
+
+Não usar apenas informações estáticas.
+
+Quando uma funcionalidade ainda não estiver implementada, criar camada de serviço/interface preparada para integração.
+
+Usar dados mockados somente quando necessário para desenvolvimento inicial.
+
+Código limpo e documentado.
+
+Criar componentes reutilizáveis.
+
+Criar estados de:
+- Loading
+- Erro
+- Vazio
+
+Exemplos:
+"Você ainda não possui músicas."
+"Não encontramos músicos nessa região."
+"Você ainda não possui oportunidades."
+
+---
+
+# 46. ENTREGÁVEIS
+
+Ao finalizar cada etapa, apresentar:
+1. Estrutura de pastas
+2. Dependências
+3. Arquitetura
+4. Banco de dados
+5. Modelos
+6. Serviços
+7. Telas
+8. Rotas
+9. Estado global
+10. Instruções para executar
+11. Variáveis de ambiente
+12. Próximos passos
+
+---
+
+# 47. REGRA PRINCIPAL
+
+Não trate o aplicativo como apenas uma rede social.
+
+Ele deve ser construído como:
+
+# REDE PROFISSIONAL DO MERCADO MUSICAL
+
+Resolver problemas reais:
+
+"Vou fazer um show em outra cidade e preciso de músicos."
+
+"Sou músico e quero encontrar trabalhos."
+
+"Sou compositor e quero encontrar artistas para gravar minhas músicas."
+
+"Sou artista e quero encontrar novas composições."
+
+"Preciso organizar os ensaios da minha banda."
+
+"Preciso encontrar profissionais disponíveis."
+
+"Quero divulgar meu trabalho."
+
+"Quero construir minha rede profissional na música."
+
+O aplicativo deve conectar todas essas necessidades em uma única plataforma.
+
+---
+
+# 48. PRIMEIRA ETAPA
+
+Antes de implementar todas as funcionalidades:
+
+1. Arquitetura Flutter
+2. Design System
+3. Navegação
+4. Login/cadastro
+5. Home
+6. Busca
+7. Perfil profissional
+8. Perfil de músico
+9. Perfil de artista
+10. Feed
+11. Upload/publicação de música
+12. Oportunidades
+
+Depois:
+- Chat
+- Contratação
+- Agenda
+- Ensaios
+- Repertórios
+- Avaliações
+- Notificações
+- Marketplace
+
+Não construir tudo de uma vez.
+
+Priorizar experiência funcional e visualmente profissional.
+
+---
+
+# IDENTIDADE DO PRODUTO
+
+O nome do aplicativo será definido posteriormente.
+
+Não utilizar nomes genéricos como "Music App".
+
+Criar arquitetura de modo que nome, logo, cores e identidade possam ser alterados facilmente sem modificar a lógica do aplicativo.
+
+O resultado deve parecer um aplicativo comercial real, moderno e pronto para evolução, e não um projeto acadêmico ou demonstração simples.

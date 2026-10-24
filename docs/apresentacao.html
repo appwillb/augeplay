@@ -1,0 +1,867 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPSMusic — Apresentação Executiva e Comercial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0C10;
+      --card-bg: #151821;
+      --card-border: #232838;
+      --primary: #FFB800;
+      --primary-light: #FFCE48;
+      --secondary: #8B5CF6;
+      --text: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --green: #10B981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Regras de impressão para exportação em PDF */
+    @page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    background: #0B0C10 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .page {
+    width: 210mm !important;
+    height: 296mm !important;
+    max-height: 296mm !important;
+    padding: 28mm 20mm !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .page:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+}
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 40px;
+      border-bottom: 1px solid var(--card-border);
+      position: relative;
+    }
+
+    /* Header e Marca */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #FFB800 0%, #FF8B00 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 4px 20px rgba(255, 184, 0, 0.3);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .doc-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 184, 0, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(255, 184, 0, 0.3);
+    }
+
+    /* Capa */
+    .cover-page {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      min-height: 90vh;
+      padding: 60px 30px;
+    }
+
+    .cover-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #D1D5DB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-subtitle {
+      font-size: 20px;
+      color: var(--primary);
+      font-weight: 600;
+      max-width: 650px;
+      margin: 0 auto 24px auto;
+    }
+
+    .cover-description {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 40px auto;
+      line-height: 1.7;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .meta-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .meta-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 4px;
+    }
+
+    /* Layout de Feature com Mockup */
+    .feature-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+      margin-top: 10px;
+      flex: 1;
+    }
+
+    .feature-content h2 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      color: #FFF;
+    }
+
+    .feature-tagline {
+      font-size: 15px;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .bullet-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(255, 184, 0, 0.15);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .bullet-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .bullet-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Mockup de Telefone */
+    .phone-mockup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-frame {
+      width: 280px;
+      max-width: 100%;
+      border-radius: 36px;
+      padding: 10px;
+      background: #1C1F2B;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 184, 0, 0.12);
+      border: 3px solid #2D3446;
+    }
+
+    .phone-screen {
+      width: 100%;
+      border-radius: 28px;
+      display: block;
+      overflow: hidden;
+      aspect-ratio: 9 / 19.5;
+      object-fit: cover;
+      background: #0F1015;
+    }
+
+    /* Destaques Comerciais e Métricas */
+    .business-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .biz-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .biz-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .biz-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--card-border);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Botão flutuante para baixar PDF / Imprimir */
+    .print-bar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: #181A22;
+      border-bottom: 2px solid var(--primary);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .btn-print {
+      background: var(--primary);
+      color: #000;
+      font-weight: 800;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-print:hover {
+      background: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .feature-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .page {
+        padding: 30px 20px;
+        height: auto;
+      }
+      .cover-title {
+        font-size: 36px;
+      }
+      .cover-meta {
+        grid-template-columns: 1fr;
+      }
+      .business-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Ação Superior -->
+  <div class="print-bar no-print">
+    <div>
+      <strong style="color: #FFF;">GPSMusic — Apresentação Oficial do Aplicativo</strong>
+      <div style="font-size: 12px; color: var(--text-muted);">Documento para Financiadores, Sócios e Investidores</div>
+    </div>
+    <button class="btn-print" onclick="window.print()">📥 Imprimir / Salvar como PDF</button>
+  </div>
+
+  <div class="container">
+
+    <!-- PÁGINA 1: CAPA EXECUTIVA -->
+    <div class="page cover-page">
+      <div class="brand-header" style="width: 100%; margin-bottom: 20px;">
+        <div class="doc-tag" style="margin: 0 auto;">Dossiê Oficial de Produto & Investimento</div>
+      </div>
+      <div style="margin: 10px auto 25px auto; text-align: center;">
+        <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 220px; max-width: 90%; object-fit: contain; filter: drop-shadow(0 10px 30px rgba(255, 184, 0, 0.35));">
+      </div>
+
+      <div style="margin: auto 0;">
+        <h1 class="cover-title">A REDE PROFISSIONAL DO MERCADO MUSICAL</h1>
+        <p class="cover-subtitle">"Encontre músicos, encontre oportunidades e faça sua música acontecer em qualquer lugar."</p>
+        <p class="cover-description">
+          Uma plataforma mobile de alta tecnologia que resolve a maior dor de cantores, bandas e produtores no Brasil: 
+          encontrar músicos qualificados e disponíveis em qualquer cidade ou estado para shows, gravações e turnês, com contratação segura, repertório digital e cachê transparente.
+        </p>
+
+        <div class="cover-meta">
+          <div class="meta-box">
+            <div class="meta-label">Estágio Atual</div>
+            <div class="meta-value">MVP 100% Funcional (Flutter)</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">Mercado Alvo</div>
+            <div class="meta-value">Músicos, Artistas & Compositores</div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">Disponibilidade</div>
+            <div class="meta-value">Android, iOS & Web</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note" style="width: 100%;">
+        <span>GPSMusic Technologies • 2026</span>
+        <span>Apresentação Comercial Confidencial</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 2: O PROBLEMA REAL E A SOLUÇÃO -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Problema & Oportunidade</div>
+      </div>
+
+      <div>
+        <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 12px;">Por que o mercado musical precisa do GPSMusic?</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 30px;">
+          O mercado de shows ao vivo movimenta bilhões de reais, mas a contratação de músicos ainda ocorre de forma caótica através de grupos de WhatsApp, mensagens perdidas e indicações informais de última hora.
+        </p>
+
+        <div class="business-grid">
+          <div class="biz-card">
+            <h3>🔴 A Dor do Artista Viajando</h3>
+            <p>
+              Um cantor vai realizar um show em outra cidade ou estado (ex: Goiânia para São Paulo) e precisa com urgência de baterista, guitarrista ou sanfoneiro que conheçam o repertório. Levar uma banda inteira tem custo altíssimo de aéreo, hotel e vans.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>🟢 A Solução GPSMusic</h3>
+            <p>
+              O artista abre o app, filtra a cidade do show, o instrumento necessário e a data exata. Encontra profissionais de ponta disponíveis na região, escuta os áudios no portfólio, envia o convite formal e fecha o cachê em poucos cliques.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>🔴 A Dor do Músico Freelancer</h3>
+            <p>
+              Músicos competentes ficam com datas livres na agenda sem ter como divulgar sua disponibilidade profissional, perdendo dezenas de cachês todos os meses por falta de uma vitrine especializada.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>🟢 A Solução GPSMusic</h3>
+            <p>
+              O músico ativa o status <strong>🟢 DISPONÍVEL</strong>, cadastra seu cachê base sugerido, raio de atendimento em km e recebe convites formais de trabalho com data, horário, local e valores garantidos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Visão Estratégica</span>
+        <span>Página 2</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 3: HOME DASHBOARD -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Funcionalidade 01</div>
+      </div>
+
+      <div class="feature-layout">
+        <div class="feature-content">
+          <h2>Dashboard Inicial Inteligente</h2>
+          <div class="feature-tagline">"Tudo o que o músico precisa logo na primeira tela."</div>
+          <p class="feature-desc">
+            A porta de entrada do aplicativo é orientada a resultados e rapidez. O usuário tem visão instantânea de oportunidades de trabalho, profissionais próximos e novidades musicais.
+          </p>
+
+          <ul class="bullet-list">
+            <li class="bullet-item">
+              <div class="bullet-icon">📍</div>
+              <div>
+                <div class="bullet-title">Ação Rápida: Vai tocar em outra cidade?</div>
+                <div class="bullet-text">Atalho direto para selecionar a cidade de destino e encontrar os profissionais ideais em segundos.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🎸</div>
+              <div>
+                <div class="bullet-title">Carrossel de Músicos Disponíveis</div>
+                <div class="bullet-text">Exibição de guitarristas, bateristas, cantores e técnicos com status ativo 🟢 e nota média de avaliação.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🎯</div>
+              <div>
+                <div class="bullet-title">Mural de Vagas & Oportunidades</div>
+                <div class="bullet-text">Shows com cachês reais explicitados (ex: R$ 600,00) com botão direto de candidatura.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🎵</div>
+              <div>
+                <div class="bullet-title">Player de Áudio Global Fixo</div>
+                <div class="bullet-text">Mini-player contínuo na base: a música nunca é interrompida durante a navegação.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <img class="phone-screen" src="assets/screen_home.png" alt="Tela Inicial do GPSMusic">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Tela Inicial</span>
+        <span>Página 3</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 4: DESCOBRIR & BUSCA -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Funcionalidade 02</div>
+      </div>
+
+      <div class="feature-layout">
+        <div class="feature-content">
+          <h2>Motor de Busca & Filtros Avançados</h2>
+          <div class="feature-tagline">"Encontre o profissional exato com cachê transparente."</div>
+          <p class="feature-desc">
+            Busca multi-critério de alta precisão que permite filtrar por instrumentos, estilos musicais, cidades, estados, datas específicas de shows e faixas de cachê.
+          </p>
+
+          <ul class="bullet-list">
+            <li class="bullet-item">
+              <div class="bullet-icon">🔎</div>
+              <div>
+                <div class="bullet-title">4 Abas Especializadas de Conteúdo</div>
+                <div class="bullet-text">Músicos & Artistas, Oportunidades, Músicas Lançadas e Composições Inéditas.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">💰</div>
+              <div>
+                <div class="bullet-title">Cachê Base Visível</div>
+                <div class="bullet-text">Fim do tabu de valores: contratantes e contratados sabem exatamente a média de mercado pré-estabelecida.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🟢</div>
+              <div>
+                <div class="bullet-title">Filtro 'Somente Disponíveis'</div>
+                <div class="bullet-text">Elimina perda de tempo com profissionais ocupados ou sem disponibilidade para a data.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">⭐</div>
+              <div>
+                <div class="bullet-title">Métricas de Reputação & Avaliações</div>
+                <div class="bullet-text">Histórico de pontualidade, profissionalismo e musicalidade com notas de 1 a 5 estrelas.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <img class="phone-screen" src="assets/screen_descobrir.png" alt="Tela de Busca e Descoberta">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Descoberta & Filtros</span>
+        <span>Página 4</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 5: FEED SOCIAL & NETWORKING -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Funcionalidade 03</div>
+      </div>
+
+      <div class="feature-layout">
+        <div class="feature-content">
+          <h2>Mural Musical & Feed Social Profissional</h2>
+          <div class="feature-tagline">"O LinkedIn moderno dos músicos e artistas."</div>
+          <p class="feature-desc">
+            Diferente das redes sociais genéricas, aqui o algoritmo prioriza postagens relevantes ao ecossistema musical: abertura de agenda, vídeos de passagem de som e lançamentos.
+          </p>
+
+          <ul class="bullet-list">
+            <li class="bullet-item">
+              <div class="bullet-icon">📢</div>
+              <div>
+                <div class="bullet-title">Divulgação de Agenda e Freelance</div>
+                <div class="bullet-text">Músicos anunciam noites disponíveis para contratação com alcance direto a cantores e produtores.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🎧</div>
+              <div>
+                <div class="bullet-title">Publicações com Faixas e Áudios Anexos</div>
+                <div class="bullet-text">Posts interativos com reprodução direta da gravação ou demonstração acústica.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🤝</div>
+              <div>
+                <div class="bullet-title">Engajamento Profissional</div>
+                <div class="bullet-text">Curtidas, comentários técnicos, compartilhamento de repertório e conexão entre bandas.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">✍️</div>
+              <div>
+                <div class="bullet-title">Vitrine de Composições</div>
+                <div class="bullet-text">Compositores publicam letras e trechos com o selo "Procura-se Artista para Gravação".</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <img class="phone-screen" src="assets/screen_feed.png" alt="Tela do Mural e Feed Social">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Feed Social</span>
+        <span>Página 5</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 6: CHAT & CONTRATAÇÃO -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Funcionalidade 04</div>
+      </div>
+
+      <div class="feature-layout">
+        <div class="feature-content">
+          <h2>Chat em Tempo Real & Fluxo de Contratação</h2>
+          <div class="feature-tagline">"Alinhe repertório, horários e feche contratos sem atrito."</div>
+          <p class="feature-desc">
+            Sistema de mensageria ágil integrado ao módulo de contratação. Reduz ruídos de comunicação e assegura que todas as partes tenham os detalhes confirmados.
+          </p>
+
+          <ul class="bullet-list">
+            <li class="bullet-item">
+              <div class="bullet-icon">⚡</div>
+              <div>
+                <div class="bullet-title">Mensagens Instantâneas & Status Online</div>
+                <div class="bullet-text">Indicador de presença 🟢 para resposta rápida no fechamento de shows urgentes.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">📄</div>
+              <div>
+                <div class="bullet-title">Convite Formal de Trabalho</div>
+                <div class="bullet-text">Card oficial com Data, Horário do Show, Passagem de Som, Local e Valor do Cachê.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">⚖️</div>
+              <div>
+                <div class="bullet-title">Botões de Decisão: Aceitar, Recusar ou Negociar</div>
+                <div class="bullet-text">Permite ao músico enviar uma contraproposta de cachê diretamente pela interface.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">📎</div>
+              <div>
+                <div class="bullet-title">Envio de Cifras e Áudios</div>
+                <div class="bullet-text">Compartilhamento de arquivos de áudio, PDFs de partituras e links de estúdio.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <img class="phone-screen" src="assets/screen_chat.png" alt="Tela de Chat e Mensagens">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Mensagens & Contratação</span>
+        <span>Página 6</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 7: PERFIL & DISPONIBILIDADE -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Funcionalidade 05</div>
+      </div>
+
+      <div class="feature-layout">
+        <div class="feature-content">
+          <h2>Perfil Profissional & Disponibilidade</h2>
+          <div class="feature-tagline">"O portfólio definitivo do músico no século XXI."</div>
+          <p class="feature-desc">
+            O coração da plataforma. Cada perfil funciona como um currículo artístico vivo, completo com métricas de estrada, repertório, fotos, vídeos e raio de atendimento.
+          </p>
+
+          <ul class="bullet-list">
+            <li class="bullet-item">
+              <div class="bullet-icon">🟢</div>
+              <div>
+                <div class="bullet-title">Status 'Disponível para Trabalho'</div>
+                <div class="bullet-text">Controle dinâmico para abrir ou fechar a agenda de shows a qualquer momento.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">💵</div>
+              <div>
+                <div class="bullet-title">Cachê Base Sugerido e Raio em KM</div>
+                <div class="bullet-text">Define o valor de diária (ex: R$ 3.500,00) e até quantos km o profissional aceita viajar.</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🗺️</div>
+              <div>
+                <div class="bullet-title">Estados Onde Aceita Trabalhar</div>
+                <div class="bullet-text">Mapeamento de disponibilidade interestadual (ex: GO, SP, MG, DF).</div>
+              </div>
+            </li>
+            <li class="bullet-item">
+              <div class="bullet-icon">🎸</div>
+              <div>
+                <div class="bullet-title">Tags de Instrumentos & Gêneros</div>
+                <div class="bullet-text">Classificação precisa: Sertanejo, Pop, Rock, MPB, Forró, Acústico, etc.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <img class="phone-screen" src="assets/screen_perfil.png" alt="Tela de Perfil Profissional">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic • Perfil Profissional</span>
+        <span>Página 7</span>
+      </div>
+    </div>
+
+    <!-- PÁGINA 8: ENSAIOS, REPERTÓRIO E MODELO DE NEGÓCIO -->
+    <div class="page">
+      <div class="brand-header">
+        <div class="logo-badge">
+          <img src="assets/gpsmusic_brand_white.png" alt="GPSMusic" style="height: 54px; object-fit: contain; filter: drop-shadow(0 4px 14px rgba(255, 184, 0, 0.25));">
+        </div>
+        <div class="doc-tag">Monetização & Futuro</div>
+      </div>
+
+      <div>
+        <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 12px;">Como o GPSMusic Gera Receita e Retorno?</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 30px;">
+          Arquitetura já desenhada para escalabilidade comercial com múltiplos fluxos de faturamento recorrente.
+        </p>
+
+        <div class="business-grid">
+          <div class="biz-card">
+            <h3>⭐ 1. Assinaturas Premium (GPSMusic PRO)</h3>
+            <p>
+              Músicos e artistas pagam mensalidade para ter perfis destacados nas buscas, selo dourado de verificado, estatísticas de visualização de perfil e raio ilimitado de atendimento.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>💳 2. Taxa sobre Intermediação de Cachês</h3>
+            <p>
+              Garantia e segurança jurídica: a plataforma retém o valor do show em caução (Escrow) e repassa ao músico pós-apresentação, retendo uma comissão de 5% a 10% sobre a transação.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>🎯 3. Vagas & Oportunidades Patrocinadas</h3>
+            <p>
+              Produtoras de eventos, festivais e grandes artistas pagam para impulsionar convites e encontrar músicos mais rápido com notificações prioritárias via Push.
+            </p>
+          </div>
+          <div class="biz-card">
+            <h3>🏬 4. Parcerias de Serviços (Estúdios & Lojas)</h3>
+            <p>
+              Integração de agendamento com estúdios de ensaio cadastrados no módulo "Meus Ensaios", gerando comissão por cada sala reservada.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 36px; padding: 24px; background: rgba(255,184,0,0.06); border: 1px solid rgba(255,184,0,0.25); border-radius: 16px;">
+          <h3 style="color: var(--primary); font-size: 18px; margin-bottom: 6px;">Qualidade Técnica Comprovada no MVP:</h3>
+          <p style="color: var(--text-muted); font-size: 13px;">
+            Código construído em <strong>Flutter com Clean Architecture</strong>, com <strong>100% de cobertura nos testes automatizados (43 testes aprovados)</strong>, rodando nativamente no celular, web e desktop. Pronto para receber backend em nuvem (PostgreSQL/Supabase) e ser publicado na App Store e Google Play.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>GPSMusic Technologies • Dossiê Comercial</span>
+        <span>Página 8</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
+
+
+
+
+

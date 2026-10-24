@@ -1,0 +1,15 @@
+.dart_tool/
+.packages
+build/
+.git/
+.gradle/
+.idea/
+*.iml
+android/
+ios/
+windows/
+linux/
+macos/
+*.pdf
+docs/
+test/

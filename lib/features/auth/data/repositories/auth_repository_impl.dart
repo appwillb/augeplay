@@ -1,0 +1,88 @@
+import 'package:playauge/core/constants/mock_data.dart';
+import 'package:playauge/core/errors/failures.dart';
+import 'package:playauge/features/auth/domain/models/user_entity.dart';
+import 'package:playauge/features/auth/domain/models/user_role.dart';
+import 'package:playauge/features/auth/domain/repositories/auth_repository.dart';
+
+/// Implementação do Repositório de Autenticação
+/// Suporta desenvolvimento local/demo e conexão com backend real
+class AuthRepositoryImpl implements AuthRepository {
+  UserEntity? _currentUser = MockData.joaoSilva; // Usuário logado por padrão na sessão demo
+
+  @override
+  Future<UserEntity> login(String email, String password) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    if (password.length < 6) {
+      throw const AuthFailure('A senha deve conter pelo menos 6 caracteres.');
+    }
+
+    // Busca usuário demo ou cria sessão
+    final found = MockData.allUsers.firstWhere(
+      (u) => u.email.toLowerCase() == email.trim().toLowerCase(),
+      orElse: () => UserEntity(
+        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+        name: email.split('@').first,
+        stageName: email.split('@').first,
+        email: email.trim(),
+        city: 'São Paulo',
+        state: 'SP',
+        bio: 'Músico cadastrado no PlayAuge.',
+        roles: const [UserRole.musico],
+      ),
+    );
+
+    _currentUser = found;
+    return found;
+  }
+
+  @override
+  Future<UserEntity> register({
+    required String name,
+    required String stageName,
+    required String email,
+    required String password,
+    required String city,
+    required String state,
+    required String bio,
+    required List<UserRole> roles,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final newUser = UserEntity(
+      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      name: name,
+      stageName: stageName.isNotEmpty ? stageName : name,
+      email: email.trim(),
+      city: city,
+      state: state,
+      bio: bio,
+      roles: roles.isNotEmpty ? roles : const [UserRole.musico],
+    );
+
+    _currentUser = newUser;
+    return newUser;
+  }
+
+  @override
+  Future<void> logout() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    _currentUser = null;
+  }
+
+  @override
+  Future<void> sendPasswordReset(String email) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  @override
+  Future<UserEntity?> getCurrentUser() async {
+    return _currentUser;
+  }
+
+  @override
+  Future<UserEntity> updateCurrentUser(UserEntity user) async {
+    _currentUser = user;
+    return user;
+  }
+}
