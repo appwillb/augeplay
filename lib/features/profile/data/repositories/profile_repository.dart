@@ -14,35 +14,52 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<List<ProfileEntity>> getAllProfiles() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 100));
     return List.unmodifiable(_profiles);
   }
 
   @override
   Future<ProfileEntity?> getProfileByUserId(String userId) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 100));
     try {
       return _profiles.firstWhere((p) => p.user.id == userId);
     } catch (_) {
-      return null;
+      try {
+        final mock = MockData.profiles.firstWhere((p) => p.user.id == userId);
+        _profiles.add(mock);
+        return mock;
+      } catch (_) {
+        return null;
+      }
     }
   }
 
   @override
   Future<ProfileEntity> updateAvailability(String userId, AvailabilityEntity availability) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 100));
     final index = _profiles.indexWhere((p) => p.user.id == userId);
     if (index != -1) {
       final updated = _profiles[index].copyWith(availability: availability);
       _profiles[index] = updated;
       return updated;
     }
-    throw Exception('Perfil não encontrado');
+    final fallback = MockData.profiles.firstWhere(
+      (p) => p.user.id == userId,
+      orElse: () => ProfileEntity(
+        user: MockData.allUsers.firstWhere(
+          (u) => u.id == userId,
+          orElse: () => MockData.joaoSilva,
+        ),
+      ),
+    );
+    final updated = fallback.copyWith(availability: availability);
+    _profiles.add(updated);
+    return updated;
   }
 
   @override
   Future<ProfileEntity> updateProfile(ProfileEntity profile) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 100));
     final index = _profiles.indexWhere((p) => p.user.id == profile.user.id);
     if (index != -1) {
       _profiles[index] = profile;

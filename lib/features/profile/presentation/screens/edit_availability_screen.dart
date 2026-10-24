@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:playauge/core/theme/app_colors.dart';
 import 'package:playauge/core/theme/app_text_styles.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
-import 'package:playauge/features/profile/domain/models/availability_entity.dart';
 import 'package:playauge/features/profile/presentation/state/profile_provider.dart';
 import 'package:playauge/shared/widgets/app_button.dart';
 import 'package:playauge/shared/widgets/app_text_field.dart';
@@ -26,13 +25,16 @@ class _EditAvailabilityScreenState extends State<EditAvailabilityScreen> {
   late TextEditingController _baseRateController;
   late TextEditingController _radiusController;
   late TextEditingController _notesController;
+  bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     final a = widget.profile.availability;
     _isAvailable = a.isAvailable;
-    _baseRateController = TextEditingController(text: a.baseRate?.toStringAsFixed(0) ?? '650');
+    _baseRateController = TextEditingController(
+      text: a.baseRate != null ? a.baseRate!.toStringAsFixed(0) : '650',
+    );
     _radiusController = TextEditingController(text: a.serviceRadiusKm.toString());
     _notesController = TextEditingController(text: a.notes ?? '');
   }
@@ -46,20 +48,46 @@ class _EditAvailabilityScreenState extends State<EditAvailabilityScreen> {
   }
 
   Future<void> _save() async {
+    setState(() => _isSaving = true);
+
+    final rawRateText = _baseRateController.text.trim().replaceAll(',', '.');
+    final parsedRate = double.tryParse(rawRateText);
+
     final newAvailability = widget.profile.availability.copyWith(
       isAvailable: _isAvailable,
-      baseRate: double.tryParse(_baseRateController.text.trim()),
+      baseRate: parsedRate,
       serviceRadiusKm: int.tryParse(_radiusController.text.trim()) ?? 100,
       notes: _notesController.text.trim(),
     );
 
-    await widget.profileProvider.updateAvailability(newAvailability);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Disponibilidade atualizada com sucesso!')),
+    try {
+      await widget.profileProvider.updateAvailability(
+        newAvailability,
+        userId: widget.profile.user.id,
       );
-      Navigator.pop(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: AppColors.success,
+            content: Text('Disponibilidade e Cachê atualizados com sucesso!'),
+          ),
+        );
+        Navigator.pop(context, newAvailability);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.error,
+            content: Text('Erro ao salvar: $e'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -116,7 +144,7 @@ class _EditAvailabilityScreenState extends State<EditAvailabilityScreen> {
               label: 'Cachê Base / Diária Sugerida (R\$)',
               hint: 'Ex: 650',
               controller: _baseRateController,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               prefixIcon: Icons.attach_money_rounded,
             ),
             const SizedBox(height: 16),
@@ -143,6 +171,8 @@ class _EditAvailabilityScreenState extends State<EditAvailabilityScreen> {
 
             AppButton(
               label: 'Salvar Configurações',
+              icon: Icons.check_circle_rounded,
+              isLoading: _isSaving,
               onPressed: _save,
             ),
           ],

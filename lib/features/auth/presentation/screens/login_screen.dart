@@ -140,6 +140,40 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Acesso Rápido de Demonstração:',
+                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ActionChip(
+                        avatar: const Icon(Icons.music_note, size: 16, color: AppColors.primary),
+                        label: const Text('João Silva (Músico)', style: TextStyle(fontSize: 12)),
+                        backgroundColor: AppColors.surfaceElevated,
+                        side: const BorderSide(color: AppColors.surfaceBorder),
+                        onPressed: () {
+                          _emailController.text = 'joao.silva@playauge.demo';
+                          _passwordController.text = '123456';
+                          _submit();
+                        },
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.event_available, size: 16, color: AppColors.availableGreen),
+                        label: const Text('Pedro Santos (Contratante)', style: TextStyle(fontSize: 12)),
+                        backgroundColor: AppColors.surfaceElevated,
+                        side: const BorderSide(color: AppColors.surfaceBorder),
+                        onPressed: () {
+                          _emailController.text = 'pedro.santos@playauge.demo';
+                          _passwordController.text = '123456';
+                          _submit();
+                        },
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 24),
 
                   // Botão Entrar

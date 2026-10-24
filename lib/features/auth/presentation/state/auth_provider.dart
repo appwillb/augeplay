@@ -78,6 +78,11 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateCurrentUser(UserEntity user) async {
+    _currentUser = await _repository.updateCurrentUser(user);
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     await _repository.logout();
     _currentUser = null;

@@ -8,6 +8,7 @@ import 'package:playauge/features/opportunities/presentation/state/opportunity_p
 import 'package:playauge/features/music/presentation/state/music_provider.dart';
 import 'package:playauge/features/feed/presentation/state/feed_provider.dart';
 import 'package:playauge/features/profile/presentation/state/profile_provider.dart';
+import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/contracts/presentation/state/contract_provider.dart';
 import 'package:playauge/features/videos/presentation/state/video_provider.dart';
 import 'package:playauge/features/rehearsals/data/repositories/rehearsal_repository.dart';
@@ -58,11 +59,30 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    widget.authProvider.addListener(_onStateChanged);
+    widget.profileProvider.addListener(_onStateChanged);
+  }
+
+  void _onStateChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.authProvider.removeListener(_onStateChanged);
+    widget.profileProvider.removeListener(_onStateChanged);
+    super.dispose();
+  }
+
   void _onOpenProfile(String userId) {
-    final profile = MockData.profiles.firstWhere(
-      (p) => p.user.id == userId,
-      orElse: () => MockData.profiles.first,
-    );
+    final profile = widget.profileProvider.getProfile(userId) ??
+        MockData.profiles.firstWhere(
+          (p) => p.user.id == userId,
+          orElse: () => MockData.profiles.first,
+        );
 
     final currentUser = widget.authProvider.currentUser ?? MockData.joaoSilva;
 
@@ -74,7 +94,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           profileProvider: widget.profileProvider,
           videoProvider: widget.videoProvider,
           currentUser: currentUser,
+          authProvider: widget.authProvider,
           isMyProfile: widget.authProvider.currentUser?.id == userId,
+          onLogout: () async {
+            await widget.authProvider.logout();
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
           onInviteForGig: () {
             Navigator.push(
               context,
@@ -204,10 +231,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final currentUser = widget.authProvider.currentUser ?? MockData.joaoSilva;
-    final myProfile = MockData.profiles.firstWhere(
-      (p) => p.user.id == currentUser.id,
-      orElse: () => MockData.profiles.first,
-    );
+    final myProfile = widget.profileProvider.getProfile(currentUser.id) ??
+        MockData.profiles.firstWhere(
+          (p) => p.user.id == currentUser.id,
+          orElse: () => ProfileEntity(user: currentUser),
+        );
 
     final screens = [
       HomeDashboardScreen(
@@ -241,7 +269,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         profileProvider: widget.profileProvider,
         videoProvider: widget.videoProvider,
         currentUser: currentUser,
+        authProvider: widget.authProvider,
         isMyProfile: true,
+        onLogout: () async {
+          await widget.authProvider.logout();
+        },
         onInviteForGig: () {},
         onChat: () {},
       ),

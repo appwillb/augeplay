@@ -75,12 +75,24 @@ class _PlayAugeAppState extends State<PlayAugeApp> {
     _feedProvider = FeedProvider(_feedRepository);
     _videoProvider = VideoProvider(_videoRepository);
 
+    // Sincroniza estado de autenticação para Login / Logout automático
+    _authProvider.addListener(_handleAuthChange);
+
     // Carrega convites para o usuário ativo
     _contractProvider.loadInvites('user_pedro_santos');
   }
 
+  void _handleAuthChange() {
+    if (mounted) {
+      setState(() {
+        _isLoggedIn = _authProvider.isAuthenticated;
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _authProvider.removeListener(_handleAuthChange);
     _audioService.dispose();
     super.dispose();
   }

@@ -6,6 +6,7 @@ import 'package:playauge/features/profile/domain/models/availability_entity.dart
 class ProfileProvider extends ChangeNotifier {
   final ProfileRepository _repository;
 
+  final Map<String, ProfileEntity> _profileCache = {};
   ProfileEntity? _selectedProfile;
   bool _isLoading = false;
 
@@ -14,12 +15,19 @@ class ProfileProvider extends ChangeNotifier {
   ProfileEntity? get selectedProfile => _selectedProfile;
   bool get isLoading => _isLoading;
 
+  ProfileEntity? getProfile(String userId) =>
+      _profileCache[userId] ?? (_selectedProfile?.user.id == userId ? _selectedProfile : null);
+
   Future<void> loadProfile(String userId) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _selectedProfile = await _repository.getProfileByUserId(userId);
+      final profile = await _repository.getProfileByUserId(userId);
+      if (profile != null) {
+        _profileCache[userId] = profile;
+        _selectedProfile = profile;
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -28,36 +36,51 @@ class ProfileProvider extends ChangeNotifier {
 
   void selectProfile(ProfileEntity profile) {
     _selectedProfile = profile;
+    _profileCache[profile.user.id] = profile;
     notifyListeners();
   }
 
-  Future<void> updateAvatarUrl(String newAvatarUrl) async {
-    if (_selectedProfile == null) return;
+  Future<void> updateAvatarUrl(String newAvatarUrl, {String? userId}) async {
+    final targetId = userId ?? _selectedProfile?.user.id;
+    final current = (targetId != null ? getProfile(targetId) : null) ?? _selectedProfile;
+    if (current == null) return;
 
-    final updatedUser = _selectedProfile!.user.copyWith(avatarUrl: newAvatarUrl);
-    final updatedProfile = _selectedProfile!.copyWith(user: updatedUser);
+    final updatedUser = current.user.copyWith(avatarUrl: newAvatarUrl);
+    final updatedProfile = current.copyWith(user: updatedUser);
+    await updateProfile(updatedProfile);
+  }
+
+  Future<ProfileEntity?> updateAvailability(AvailabilityEntity availability, {String? userId}) async {
+    final targetId = userId ?? _selectedProfile?.user.id;
+    if (targetId == null) return null;
 
     _isLoading = true;
     notifyListeners();
 
     try {
-      await _repository.updateProfile(updatedProfile);
-      _selectedProfile = updatedProfile;
+      final updated = await _repository.updateAvailability(targetId, availability);
+      _profileCache[targetId] = updated;
+      if (_selectedProfile?.user.id == targetId) {
+        _selectedProfile = updated;
+      }
+      return updated;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateAvailability(AvailabilityEntity availability) async {
-    if (_selectedProfile == null) return;
-
+  Future<ProfileEntity> updateProfile(ProfileEntity profile) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final updated = await _repository.updateAvailability(_selectedProfile!.user.id, availability);
-      _selectedProfile = updated;
+      final updated = await _repository.updateProfile(profile);
+      _profileCache[profile.user.id] = updated;
+      if (_selectedProfile?.user.id == profile.user.id) {
+        _selectedProfile = updated;
+      }
+      return updated;
     } finally {
       _isLoading = false;
       notifyListeners();

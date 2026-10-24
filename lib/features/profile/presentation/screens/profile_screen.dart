@@ -3,6 +3,7 @@ import 'package:playauge/core/theme/app_colors.dart';
 import 'package:playauge/core/theme/app_text_styles.dart';
 import 'package:playauge/core/utils/currency_formatter.dart';
 import 'package:playauge/features/auth/domain/models/user_entity.dart';
+import 'package:playauge/features/auth/presentation/state/auth_provider.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/profile/presentation/state/profile_provider.dart';
 import 'package:playauge/features/videos/presentation/state/video_provider.dart';
@@ -14,15 +15,18 @@ import 'package:playauge/shared/widgets/availability_badge.dart';
 import 'package:playauge/shared/widgets/star_rating.dart';
 import 'package:playauge/shared/widgets/custom_card.dart';
 import 'edit_availability_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ProfileEntity profile;
   final ProfileProvider profileProvider;
   final VideoProvider videoProvider;
   final UserEntity currentUser;
+  final AuthProvider? authProvider;
   final bool isMyProfile;
   final VoidCallback onInviteForGig;
   final VoidCallback onChat;
+  final VoidCallback? onLogout;
 
   const ProfileScreen({
     super.key,
@@ -30,9 +34,11 @@ class ProfileScreen extends StatefulWidget {
     required this.profileProvider,
     required this.videoProvider,
     required this.currentUser,
+    this.authProvider,
     this.isMyProfile = false,
     required this.onInviteForGig,
     required this.onChat,
+    this.onLogout,
   });
 
   @override
@@ -46,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    widget.profileProvider.selectProfile(widget.profile);
     widget.videoProvider.loadVideosForMusician(widget.profile.user.id);
   }
 
@@ -55,21 +62,89 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     super.dispose();
   }
 
-  void _startVideoCall() {
+  void _startVideoCall(ProfileEntity profile) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => VideoCallScreen(
           callerUser: widget.currentUser,
-          targetProfile: widget.profile,
-          proposedCache: widget.profile.availability.baseRate,
+          targetProfile: profile,
+          proposedCache: profile.availability.baseRate,
           onContractAgreed: widget.onInviteForGig,
         ),
       ),
     );
   }
 
-  void _showChangePhotoModal() {
+  void _openEditProfile(ProfileEntity profile) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditProfileScreen(
+          profile: profile,
+          profileProvider: widget.profileProvider,
+          authProvider: widget.authProvider,
+        ),
+      ),
+    );
+  }
+
+  void _openEditAvailability(ProfileEntity profile) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditAvailabilityScreen(
+          profile: profile,
+          profileProvider: widget.profileProvider,
+        ),
+      ),
+    );
+  }
+
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.logout_rounded, color: AppColors.error),
+            SizedBox(width: 10),
+            Text('Sair da Conta'),
+          ],
+        ),
+        content: const Text(
+          'Tem certeza que deseja sair da sua conta? Você precisará fazer login novamente para acessar seus shows e mensagens.',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar', style: TextStyle(color: AppColors.textSecondary)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              if (widget.onLogout != null) {
+                widget.onLogout!();
+              } else if (widget.authProvider != null) {
+                await widget.authProvider!.logout();
+              }
+            },
+            child: const Text('Sim, Sair', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChangePhotoModal(ProfileEntity profile) {
     final urlController = TextEditingController();
 
     showModalBottomSheet(
@@ -153,7 +228,13 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 onPressed: () {
                   final newUrl = urlController.text.trim();
                   if (newUrl.isNotEmpty) {
-                    widget.profileProvider.updateAvatarUrl(newUrl);
+                    widget.profileProvider.updateAvatarUrl(newUrl, userId: profile.user.id);
+                    if (widget.authProvider != null) {
+                      final currentU = widget.authProvider!.currentUser;
+                      if (currentU != null && currentU.id == profile.user.id) {
+                        widget.authProvider!.updateCurrentUser(currentU.copyWith(avatarUrl: newUrl));
+                      }
+                    }
                     Navigator.pop(ctx);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -191,339 +272,377 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final u = widget.profile.user;
-    final profile = widget.profile;
+    return AnimatedBuilder(
+      animation: widget.profileProvider,
+      builder: (context, _) {
+        final profile = widget.profileProvider.getProfile(widget.profile.user.id) ??
+            (widget.profileProvider.selectedProfile?.user.id == widget.profile.user.id
+                ? widget.profileProvider.selectedProfile!
+                : widget.profile);
+        final u = profile.user;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(u.displayName),
-        actions: [
-          if (widget.isMyProfile)
-            IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EditAvailabilityScreen(
-                      profile: profile,
-                      profileProvider: widget.profileProvider,
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header: Foto + Informações Básicas
-            Row(
-              children: [
-                Stack(
-                  children: [
-                    UserAvatar(
-                      name: u.displayName,
-                      imageUrl: u.avatarUrl,
-                      radius: 40,
-                      isVerified: u.isVerified,
-                    ),
-                    if (widget.isMyProfile)
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: GestureDetector(
-                          onTap: _showChangePhotoModal,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black45, blurRadius: 4),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt_rounded,
-                              size: 16,
-                              color: AppColors.textInverse,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            title: Text(u.displayName),
+            actions: [
+              if (widget.isMyProfile) ...[
+                IconButton(
+                  icon: const Icon(Icons.edit_rounded),
+                  tooltip: 'Editar Perfil',
+                  onPressed: () => _openEditProfile(profile),
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(u.displayName, style: AppTextStyles.titleLarge),
-                      const SizedBox(height: 4),
-                      Text(
-                        profile.instrumentsFormatted.isNotEmpty
-                            ? profile.instrumentsFormatted
-                            : u.roles.map((r) => r.shortLabel).join(', '),
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(u.locationFormatted, style: AppTextStyles.bodySmall),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          AvailabilityBadge(isAvailable: profile.availability.isAvailable),
-                          const SizedBox(width: 10),
-                          StarRating(rating: u.rating, reviewsCount: u.ratingsCount),
-                        ],
-                      ),
-                    ],
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+                  tooltip: 'Sair da Conta',
+                  onPressed: _confirmLogout,
                 ),
               ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // Métricas
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildMetric('${u.followersCount}', 'Seguidores'),
-                _buildMetric('${u.followingCount}', 'Seguindo'),
-                _buildMetric('${profile.yearsOfExperience} anos', 'Experiência'),
-                _buildMetric('${u.rating.toStringAsFixed(1)} ★', 'Avaliação'),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Botões de Ação com CHAMADA DE VÍDEO
-            if (!widget.isMyProfile) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: AppButton(
-                      label: 'Convidar Show',
-                      icon: Icons.calendar_today_rounded,
-                      onPressed: widget.onInviteForGig,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Botão de Vídeo Chamada / Audição Online
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      icon: const Icon(Icons.videocam_rounded, size: 18),
-                      label: const Flexible(
-                        child: Text(
-                          'Audição Vídeo',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      onPressed: _startVideoCall,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.surfaceElevated,
-                      side: const BorderSide(color: AppColors.surfaceBorder),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primary),
-                    onPressed: widget.onChat,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ] else ...[
-              AppButton(
-                label: 'Gerenciar Disponibilidade e Cachê',
-                icon: Icons.edit_calendar_rounded,
-                type: AppButtonType.outline,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EditAvailabilityScreen(
-                        profile: profile,
-                        profileProvider: widget.profileProvider,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
             ],
-
-            // Seletor de Abas (Vídeos Tocando vs Informações Profissionais)
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.surfaceElevated,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: AppColors.primary,
-                indicatorWeight: 3,
-                labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.play_circle_fill_rounded),
-                    text: 'Vídeos Tocando',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.badge_rounded),
-                    text: 'Perfil & Cachê',
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Conteúdo dinâmico das abas
-            AnimatedBuilder(
-              animation: _tabController,
-              builder: (context, _) {
-                if (_tabController.index == 0) {
-                  // ABA 1: Grade de Vídeos Tocando
-                  return AnimatedBuilder(
-                    animation: widget.videoProvider,
-                    builder: (context, _) {
-                      if (widget.videoProvider.isLoading) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(32),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Solos, Ensaios & Gigs', style: AppTextStyles.titleSmall),
-                              Text(
-                                '${widget.videoProvider.videos.length} vídeos',
-                                style: const TextStyle(fontSize: 12, color: AppColors.primary),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          MusicianVideosGrid(
-                            videos: widget.videoProvider.videos,
-                            isMyProfile: widget.isMyProfile,
-                            onInviteMusician: widget.onInviteForGig,
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-
-                // ABA 2: Dados Profissionais e Cachê
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header: Foto + Informações Básicas
+                Row(
                   children: [
-                    // Card de Disponibilidade e Condições Profissionais
-                    CustomCard(
+                    Stack(
+                      children: [
+                        UserAvatar(
+                          name: u.displayName,
+                          imageUrl: u.avatarUrl,
+                          radius: 40,
+                          isVerified: u.isVerified,
+                        ),
+                        if (widget.isMyProfile)
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: GestureDetector(
+                              onTap: () => _showChangePhotoModal(profile),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(color: Colors.black45, blurRadius: 4),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt_rounded,
+                                  size: 16,
+                                  color: AppColors.textInverse,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(u.displayName, style: AppTextStyles.titleLarge),
+                          const SizedBox(height: 4),
+                          Text(
+                            profile.instrumentsFormatted.isNotEmpty
+                                ? profile.instrumentsFormatted
+                                : u.roles.map((r) => r.shortLabel).join(', '),
+                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(u.locationFormatted, style: AppTextStyles.bodySmall),
+                          const SizedBox(height: 6),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Disponibilidade Profissional', style: AppTextStyles.titleSmall),
                               AvailabilityBadge(isAvailable: profile.availability.isAvailable),
+                              const SizedBox(width: 10),
+                              StarRating(rating: u.rating, reviewsCount: u.ratingsCount),
                             ],
                           ),
-                          const SizedBox(height: 12),
-                          if (profile.availability.baseRate != null)
-                            Text(
-                              'Cachê base sugerido: ${CurrencyFormatter.formatBRL(profile.availability.baseRate!)}',
-                              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
-                            ),
-                          const SizedBox(height: 6),
-                          Text('Raio de atendimento: ${profile.availability.serviceRadiusKm} km', style: AppTextStyles.bodySmall),
-                          if (profile.availability.statesServed.isNotEmpty) ...[
-                            const SizedBox(height: 4),
-                            Text('Estados atendidos: ${profile.availability.statesServed.join(', ')}', style: AppTextStyles.bodySmall),
-                          ],
-                          if (profile.availability.notes != null) ...[
-                            const SizedBox(height: 8),
-                            Text('Observações: ${profile.availability.notes}', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                          ],
                         ],
                       ),
                     ),
+                  ],
+                ),
 
-                    const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-                    // Biografia
-                    const Text('Sobre o Profissional', style: AppTextStyles.titleSmall),
-                    const SizedBox(height: 8),
-                    Text(u.bio, style: AppTextStyles.bodyMedium),
+                // Métricas
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildMetric('${u.followersCount}', 'Seguidores'),
+                    _buildMetric('${u.followingCount}', 'Seguindo'),
+                    _buildMetric('${profile.yearsOfExperience} anos', 'Experiência'),
+                    _buildMetric('${u.rating.toStringAsFixed(1)} ★', 'Avaliação'),
+                  ],
+                ),
 
-                    const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                    // Gêneros Musicais
-                    if (profile.genres.isNotEmpty) ...[
-                      const Text('Gêneros Musicais', style: AppTextStyles.titleSmall),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: profile.genres.map((g) {
-                          return Chip(
-                            label: Text(g, style: const TextStyle(fontSize: 12)),
-                            backgroundColor: AppColors.surfaceElevated,
-                            side: const BorderSide(color: AppColors.surfaceBorder),
-                          );
-                        }).toList(),
+                // Botões de Ação
+                if (!widget.isMyProfile) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          label: 'Convidar Show',
+                          icon: Icons.calendar_today_rounded,
+                          onPressed: widget.onInviteForGig,
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(width: 8),
+                      // Botão de Vídeo Chamada / Audição Online
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF10B981),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          icon: const Icon(Icons.videocam_rounded, size: 18),
+                          label: const Flexible(
+                            child: Text(
+                              'Audição Vídeo',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          onPressed: () => _startVideoCall(profile),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppColors.surfaceElevated,
+                          side: const BorderSide(color: AppColors.surfaceBorder),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primary),
+                        onPressed: widget.onChat,
+                      ),
                     ],
+                  ),
+                  const SizedBox(height: 20),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          label: 'Editar Perfil',
+                          icon: Icons.edit_rounded,
+                          onPressed: () => _openEditProfile(profile),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: AppButton(
+                          label: 'Cachê & Agenda',
+                          icon: Icons.currency_exchange_rounded,
+                          type: AppButtonType.outline,
+                          onPressed: () => _openEditAvailability(profile),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
 
-                    // Integrantes da banda se houver
-                    if (profile.bandMemberNames.isNotEmpty) ...[
-                      const Text('Integrantes da Banda', style: AppTextStyles.titleSmall),
-                      const SizedBox(height: 8),
-                      ...profile.bandMemberNames.map(
-                        (m) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
+                // Seletor de Abas (Vídeos Tocando vs Informações Profissionais)
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorColor: AppColors.primary,
+                    indicatorWeight: 3,
+                    labelColor: AppColors.primary,
+                    unselectedLabelColor: AppColors.textSecondary,
+                    tabs: const [
+                      Tab(
+                        icon: Icon(Icons.play_circle_fill_rounded),
+                        text: 'Vídeos Tocando',
+                      ),
+                      Tab(
+                        icon: Icon(Icons.badge_rounded),
+                        text: 'Perfil & Cachê',
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Conteúdo dinâmico das abas
+                AnimatedBuilder(
+                  animation: _tabController,
+                  builder: (context, _) {
+                    if (_tabController.index == 0) {
+                      // ABA 1: Grade de Vídeos Tocando
+                      return AnimatedBuilder(
+                        animation: widget.videoProvider,
+                        builder: (context, _) {
+                          if (widget.videoProvider.isLoading) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(32),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(Icons.music_note, size: 16, color: AppColors.primary),
-                              const SizedBox(width: 8),
-                              Text(m, style: AppTextStyles.bodyMedium),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Solos, Ensaios & Gigs', style: AppTextStyles.titleSmall),
+                                  Text(
+                                    '${widget.videoProvider.videos.length} vídeos',
+                                    style: const TextStyle(fontSize: 12, color: AppColors.primary),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              MusicianVideosGrid(
+                                videos: widget.videoProvider.videos,
+                                isMyProfile: widget.isMyProfile,
+                                onInviteMusician: widget.onInviteForGig,
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+
+                    // ABA 2: Dados Profissionais e Cachê
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Card de Disponibilidade e Condições Profissionais
+                        CustomCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Disponibilidade Profissional', style: AppTextStyles.titleSmall),
+                                  AvailabilityBadge(isAvailable: profile.availability.isAvailable),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              if (profile.availability.baseRate != null)
+                                Text(
+                                  'Cachê base sugerido: ${CurrencyFormatter.formatBRL(profile.availability.baseRate!)}',
+                                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                                ),
+                              const SizedBox(height: 6),
+                              Text('Raio de atendimento: ${profile.availability.serviceRadiusKm} km', style: AppTextStyles.bodySmall),
+                              if (profile.availability.statesServed.isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Text('Estados atendidos: ${profile.availability.statesServed.join(', ')}', style: AppTextStyles.bodySmall),
+                              ],
+                              if (profile.availability.notes != null && profile.availability.notes!.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Text('Observações: ${profile.availability.notes}', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                              ],
                             ],
                           ),
                         ),
+
+                        const SizedBox(height: 20),
+
+                        // Biografia
+                        const Text('Sobre o Profissional', style: AppTextStyles.titleSmall),
+                        const SizedBox(height: 8),
+                        Text(u.bio.isNotEmpty ? u.bio : 'Sem biografia informada.', style: AppTextStyles.bodyMedium),
+
+                        const SizedBox(height: 20),
+
+                        // Gêneros Musicais
+                        if (profile.genres.isNotEmpty) ...[
+                          const Text('Gêneros Musicais', style: AppTextStyles.titleSmall),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: profile.genres.map((g) {
+                              return Chip(
+                                label: Text(g, style: const TextStyle(fontSize: 12)),
+                                backgroundColor: AppColors.surfaceElevated,
+                                side: const BorderSide(color: AppColors.surfaceBorder),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        // Integrantes da banda se houver
+                        if (profile.bandMemberNames.isNotEmpty) ...[
+                          const Text('Integrantes da Banda', style: AppTextStyles.titleSmall),
+                          const SizedBox(height: 8),
+                          ...profile.bandMemberNames.map(
+                            (m) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.music_note, size: 16, color: AppColors.primary),
+                                  const SizedBox(width: 8),
+                                  Text(m, style: AppTextStyles.bodyMedium),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+
+                // Card de Logout se for meu perfil
+                if (widget.isMyProfile) ...[
+                  const SizedBox(height: 32),
+                  CustomCard(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.logout_rounded, color: AppColors.error, size: 20),
                       ),
-                      const SizedBox(height: 20),
-                    ],
-                  ],
-                );
-              },
+                      title: const Text(
+                        'Sair da Conta',
+                        style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text(
+                        'Encerrar sessão ativa e retornar à tela de login',
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.error),
+                      onTap: _confirmLogout,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
