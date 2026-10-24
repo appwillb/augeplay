@@ -31,6 +31,24 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateAvatarUrl(String newAvatarUrl) async {
+    if (_selectedProfile == null) return;
+
+    final updatedUser = _selectedProfile!.user.copyWith(avatarUrl: newAvatarUrl);
+    final updatedProfile = _selectedProfile!.copyWith(user: updatedUser);
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repository.updateProfile(updatedProfile);
+      _selectedProfile = updatedProfile;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateAvailability(AvailabilityEntity availability) async {
     if (_selectedProfile == null) return;
 

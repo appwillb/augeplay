@@ -69,6 +69,126 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
+  void _showChangePhotoModal() {
+    final urlController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.add_a_photo_rounded, color: AppColors.primary),
+                  SizedBox(width: 10),
+                  Text('Alterar Foto de Perfil', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Cole a URL de uma foto ou escolha uma sugestão profissional abaixo:',
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: urlController,
+                decoration: InputDecoration(
+                  hintText: 'https://exemplo.com/minha-foto.jpg',
+                  filled: true,
+                  fillColor: AppColors.surfaceElevated,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text('Sugestões Rápidas:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildQuickAvatarOption(
+                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+                    'Cantora',
+                    urlController,
+                  ),
+                  _buildQuickAvatarOption(
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+                    'Músico',
+                    urlController,
+                  ),
+                  _buildQuickAvatarOption(
+                    'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
+                    'Artista',
+                    urlController,
+                  ),
+                  _buildQuickAvatarOption(
+                    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400',
+                    'Guitarra',
+                    urlController,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.textInverse,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.check_circle_rounded),
+                label: const Text('Salvar Foto de Perfil', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  final newUrl = urlController.text.trim();
+                  if (newUrl.isNotEmpty) {
+                    widget.profileProvider.updateAvatarUrl(newUrl);
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: AppColors.success,
+                        content: Text('Foto de perfil atualizada com sucesso!'),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildQuickAvatarOption(String url, String label, TextEditingController controller) {
+    return GestureDetector(
+      onTap: () {
+        controller.text = url;
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundImage: NetworkImage(url),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final u = widget.profile.user;
@@ -104,10 +224,38 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             // Header: Foto + Informações Básicas
             Row(
               children: [
-                UserAvatar(
-                  name: u.displayName,
-                  radius: 40,
-                  isVerified: u.isVerified,
+                Stack(
+                  children: [
+                    UserAvatar(
+                      name: u.displayName,
+                      imageUrl: u.avatarUrl,
+                      radius: 40,
+                      isVerified: u.isVerified,
+                    ),
+                    if (widget.isMyProfile)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: _showChangePhotoModal,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(color: Colors.black45, blurRadius: 4),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt_rounded,
+                              size: 16,
+                              color: AppColors.textInverse,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(width: 20),
                 Expanded(
