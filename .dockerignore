@@ -1,6 +1,6 @@
-.dart_tool/
+﻿.dart_tool/
 .packages
-build/
+# build/
 .git/
 .gradle/
 .idea/
@@ -13,3 +13,4 @@ macos/
 *.pdf
 docs/
 test/
+
