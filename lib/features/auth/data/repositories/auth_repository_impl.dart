@@ -32,7 +32,18 @@ class AuthRepositoryImpl implements AuthRepository {
       throw const AuthFailure('A senha deve conter pelo menos 6 caracteres.');
     }
 
-    final found = MockData.allUsers.firstWhere(
+    final savedProfiles = LocalStorageService.loadProfiles();
+    UserEntity? foundInSaved;
+    if (savedProfiles != null) {
+      for (final p in savedProfiles) {
+        if (p.user.email.toLowerCase() == email.trim().toLowerCase()) {
+          foundInSaved = p.user;
+          break;
+        }
+      }
+    }
+
+    final found = foundInSaved ?? MockData.allUsers.firstWhere(
       (u) => u.email.toLowerCase() == email.trim().toLowerCase(),
       orElse: () => UserEntity(
         id: 'user_${DateTime.now().millisecondsSinceEpoch}',

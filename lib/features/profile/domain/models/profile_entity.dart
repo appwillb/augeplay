@@ -76,7 +76,7 @@ class ProfileEntity {
       user: UserEntity.fromJson(json['user'] as Map<String, dynamic>),
       instruments: (json['instruments'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       genres: (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      yearsOfExperience: json['yearsOfExperience'] as int? ?? 1,
+      yearsOfExperience: (json['yearsOfExperience'] as num?)?.toInt() ?? 1,
       availability: json['availability'] != null
           ? AvailabilityEntity.fromJson(json['availability'] as Map<String, dynamic>)
           : const AvailabilityEntity(),

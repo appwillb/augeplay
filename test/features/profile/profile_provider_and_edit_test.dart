@@ -96,5 +96,42 @@ void main() {
       expect(authProvider.isAuthenticated, isTrue);
       expect(authProvider.currentUser?.email, 'joao.silva@playauge.demo');
     });
+
+    test('F5 / App restart preserves all edits and does not revert to mock data', () async {
+      // 1. Edit availability / cache
+      final initial = MockData.profiles.first;
+      const newAvail = AvailabilityEntity(
+        isAvailable: true,
+        baseRate: 2200.0,
+        serviceRadiusKm: 300,
+        notes: 'Cachê atualizado pelo usuário.',
+      );
+      await profileProvider.updateAvailability(newAvail, userId: initial.user.id);
+
+      // 2. Edit profile data
+      final editedUser = initial.user.copyWith(
+        name: 'Carlos Produtor Teste',
+        city: 'Salvador',
+        state: 'BA',
+      );
+      await profileProvider.updateProfile(initial.copyWith(
+        user: editedUser,
+        availability: newAvail,
+      ));
+
+      // 3. SIMULATE F5 / APP RESTART: Instantiate brand new repositories and providers
+      final freshRepo = ProfileRepositoryImpl();
+      final freshProvider = ProfileProvider(freshRepo);
+
+      // 4. Verify that synchronous getProfile immediately returns edited data without falling back to mock
+      final restored = freshProvider.getProfile(initial.user.id);
+      expect(restored, isNotNull);
+      expect(restored!.user.name, 'Carlos Produtor Teste');
+      expect(restored.user.city, 'Salvador');
+      expect(restored.user.state, 'BA');
+      expect(restored.availability.baseRate, 2200.0);
+      expect(restored.availability.serviceRadiusKm, 300);
+      expect(restored.availability.notes, 'Cachê atualizado pelo usuário.');
+    });
   });
 }

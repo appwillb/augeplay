@@ -75,14 +75,16 @@ class AvailabilityEntity {
     return AvailabilityEntity(
       isAvailable: json['isAvailable'] as bool? ?? true,
       baseRate: (json['baseRate'] as num?)?.toDouble(),
-      serviceRadiusKm: json['serviceRadiusKm'] as int? ?? 100,
+      serviceRadiusKm: (json['serviceRadiusKm'] as num?)?.toInt() ?? 100,
       statesServed: (json['statesServed'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       specificAvailableDates: (json['specificAvailableDates'] as List<dynamic>?)
-              ?.map((e) => DateTime.parse(e.toString()))
+              ?.map((e) => DateTime.tryParse(e.toString()))
+              .whereType<DateTime>()
               .toList() ??
           [],
       blockedDates: (json['blockedDates'] as List<dynamic>?)
-              ?.map((e) => DateTime.parse(e.toString()))
+              ?.map((e) => DateTime.tryParse(e.toString()))
+              .whereType<DateTime>()
               .toList() ??
           [],
       notes: json['notes'] as String?,

@@ -111,9 +111,9 @@ class UserEntity {
           [UserRole.musico],
       avatarUrl: json['avatarUrl'] as String?,
       rating: (json['rating'] as num?)?.toDouble() ?? 5.0,
-      ratingsCount: json['ratingsCount'] as int? ?? 0,
-      followersCount: json['followersCount'] as int? ?? 0,
-      followingCount: json['followingCount'] as int? ?? 0,
+      ratingsCount: (json['ratingsCount'] as num?)?.toInt() ?? 0,
+      followersCount: (json['followersCount'] as num?)?.toInt() ?? 0,
+      followingCount: (json['followingCount'] as num?)?.toInt() ?? 0,
       isVerified: json['isVerified'] as bool? ?? false,
     );
   }

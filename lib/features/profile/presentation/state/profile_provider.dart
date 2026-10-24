@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:playauge/core/constants/mock_data.dart';
+import 'package:playauge/core/storage/local_storage_service.dart';
 import 'package:playauge/features/profile/data/repositories/profile_repository.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/profile/domain/models/availability_entity.dart';
@@ -10,13 +12,46 @@ class ProfileProvider extends ChangeNotifier {
   ProfileEntity? _selectedProfile;
   bool _isLoading = false;
 
-  ProfileProvider(this._repository);
+  ProfileProvider(this._repository) {
+    _initFromStorage();
+  }
+
+  void _initFromStorage() {
+    final saved = LocalStorageService.loadProfiles();
+    if (saved != null && saved.isNotEmpty) {
+      for (final p in saved) {
+        _profileCache[p.user.id] = p;
+      }
+    } else {
+      for (final p in MockData.profiles) {
+        _profileCache[p.user.id] = p;
+      }
+      LocalStorageService.saveProfiles(MockData.profiles);
+    }
+  }
 
   ProfileEntity? get selectedProfile => _selectedProfile;
   bool get isLoading => _isLoading;
 
-  ProfileEntity? getProfile(String userId) =>
-      _profileCache[userId] ?? (_selectedProfile?.user.id == userId ? _selectedProfile : null);
+  ProfileEntity? getProfile(String userId) {
+    if (_profileCache.containsKey(userId)) {
+      return _profileCache[userId];
+    }
+    final saved = LocalStorageService.loadProfiles();
+    if (saved != null) {
+      final found = saved.where((p) => p.user.id == userId).firstOrNull;
+      if (found != null) {
+        _profileCache[userId] = found;
+        return found;
+      }
+    }
+    final mock = MockData.profiles.where((p) => p.user.id == userId).firstOrNull;
+    if (mock != null) {
+      _profileCache[userId] = mock;
+      return mock;
+    }
+    return _selectedProfile?.user.id == userId ? _selectedProfile : null;
+  }
 
   Future<void> loadProfile(String userId) async {
     _isLoading = true;

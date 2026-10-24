@@ -1,4 +1,5 @@
 import 'package:playauge/core/constants/mock_data.dart';
+import 'package:playauge/core/storage/local_storage_service.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
 import 'package:playauge/features/discovery/domain/models/search_filter.dart';
 import 'package:playauge/features/auth/domain/models/user_role.dart';
@@ -8,7 +9,13 @@ abstract class DiscoveryRepository {
 }
 
 class DiscoveryRepositoryImpl implements DiscoveryRepository {
-  final List<ProfileEntity> _profiles = List.from(MockData.profiles);
+  List<ProfileEntity> get _profiles {
+    final saved = LocalStorageService.loadProfiles();
+    if (saved != null && saved.isNotEmpty) {
+      return saved;
+    }
+    return MockData.profiles;
+  }
 
   @override
   Future<List<ProfileEntity>> searchProfiles(SearchFilter filter) async {

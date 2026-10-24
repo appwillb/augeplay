@@ -4,13 +4,16 @@ class LocalStoragePlatform {
   static void setString(String key, String value) {
     try {
       html.window.localStorage[key] = value;
-    } catch (_) {}
+    } catch (e) {
+      html.window.console.warn('LocalStoragePlatform error setting $key: $e');
+    }
   }
 
   static String? getString(String key) {
     try {
       return html.window.localStorage[key];
-    } catch (_) {
+    } catch (e) {
+      html.window.console.warn('LocalStoragePlatform error getting $key: $e');
       return null;
     }
   }
