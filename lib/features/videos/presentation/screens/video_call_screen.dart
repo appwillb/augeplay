@@ -5,6 +5,7 @@ import 'package:playauge/core/theme/app_text_styles.dart';
 import 'package:playauge/core/utils/currency_formatter.dart';
 import 'package:playauge/features/auth/domain/models/user_entity.dart';
 import 'package:playauge/features/profile/domain/models/profile_entity.dart';
+import 'package:playauge/features/videos/presentation/widgets/web_media_view.dart';
 
 /// Tela de Chamada de Vídeo para Audição Online e Negociação Direta de Cachê
 class VideoCallScreen extends StatefulWidget {
@@ -29,11 +30,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   bool _isMuted = false;
   bool _isVideoOff = false;
   bool _isFrontCamera = true;
-  bool _showChatPanel = false;
+  bool _showPerformanceVideo = true;
   int _callDurationSeconds = 0;
   Timer? _callTimer;
 
-  final TextEditingController _negotiationNoteController = TextEditingController();
   late double _currentProposedCache;
 
   @override
@@ -56,7 +56,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   @override
   void dispose() {
     _callTimer?.cancel();
-    _negotiationNoteController.dispose();
+    disposeWebMedia();
     super.dispose();
   }
 
@@ -120,6 +120,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               if (widget.onContractAgreed != null) {
                 widget.onContractAgreed!();
               }
+              disposeWebMedia();
               Navigator.pop(context);
             },
             child: const Text('Confirmar Cachê'),
@@ -132,19 +133,29 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   @override
   Widget build(BuildContext context) {
     final targetUser = widget.targetProfile.user;
+    final auditionVideoUrl = widget.targetProfile.videoUrls.isNotEmpty
+        ? widget.targetProfile.videoUrls.first
+        : 'https://assets.mixkit.co/videos/preview/mixkit-guitarist-playing-an-acoustic-guitar-42526-large.mp4';
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. Câmera Remota (Músico Tocando / Audição ao Vivo)
+          // 1. Câmera Remota (Músico Tocando ao Vivo na Audição)
           Positioned.fill(
             child: Container(
               color: const Color(0xFF14171F),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (targetUser.avatarUrl != null && targetUser.avatarUrl!.isNotEmpty)
+                  if (_showPerformanceVideo)
+                    createVideoPlayerView(
+                      viewId: 'remote_audition_${targetUser.id}',
+                      videoUrl: auditionVideoUrl,
+                      isPlaying: true,
+                      isMuted: _isMuted,
+                    )
+                  else if (targetUser.avatarUrl != null && targetUser.avatarUrl!.isNotEmpty)
                     Image.network(
                       targetUser.avatarUrl!,
                       fit: BoxFit.cover,
@@ -156,19 +167,17 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     const Center(
                       child: Icon(Icons.person, size: 100, color: Colors.white24),
                     ),
-                  Container(
-                    color: Colors.black.withOpacity(0.4),
-                  ),
-                  // Ondas de áudio / Indicador ao vivo
+
+                  // Overlay superior
                   Positioned(
                     top: 50,
                     left: 20,
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
+                        color: Colors.black.withOpacity(0.75),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.redAccent.withOpacity(0.6)),
+                        border: Border.all(color: Colors.redAccent.withOpacity(0.8)),
                       ),
                       child: Row(
                         children: [
@@ -193,19 +202,19 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             ),
           ),
 
-          // 2. Câmera Local (Picture-in-Picture no canto superior direito)
+          // 2. Câmera Local (Picture-in-Picture com WEBCAM / CÂMERA REAL DO USUÁRIO)
           Positioned(
             top: 50,
             right: 20,
             child: Container(
-              width: 110,
-              height: 155,
+              width: 120,
+              height: 170,
               decoration: BoxDecoration(
-                color: Colors.grey[900],
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppColors.primary, width: 2),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 10),
+                  BoxShadow(color: Colors.black.withOpacity(0.6), blurRadius: 10),
                 ],
               ),
               child: ClipRRect(
@@ -213,24 +222,32 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    if (widget.callerUser.avatarUrl != null && widget.callerUser.avatarUrl!.isNotEmpty)
-                      Image.network(
-                        widget.callerUser.avatarUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Center(
-                          child: Icon(Icons.person, color: Colors.white38),
-                        ),
+                    if (!_isVideoOff)
+                      createCameraPreview(
+                        viewId: 'caller_pip',
+                        isFrontCamera: _isFrontCamera,
+                        isVideoOff: _isVideoOff,
                       )
                     else
-                      const Center(
-                        child: Icon(Icons.person, color: Colors.white38),
+                      Container(
+                        color: const Color(0xFF1E222D),
+                        child: const Center(
+                          child: Icon(Icons.videocam_off_rounded, color: Colors.redAccent, size: 32),
+                        ),
                       ),
                     Positioned(
-                      bottom: 4,
+                      bottom: 6,
                       left: 6,
-                      child: Text(
-                        'Você (${_isFrontCamera ? "Frontal" : "Traseira"})',
-                        style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          _isVideoOff ? 'Desligada' : 'Você (Ao Vivo)',
+                          style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],
@@ -246,7 +263,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.75),
+                color: Colors.black.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppColors.primary.withOpacity(0.5)),
               ),
@@ -258,7 +275,9 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   Text(
-                    widget.targetProfile.instrumentsFormatted,
+                    widget.targetProfile.instrumentsFormatted.isNotEmpty
+                        ? widget.targetProfile.instrumentsFormatted
+                        : 'Músico Profissional',
                     style: const TextStyle(color: AppColors.primary, fontSize: 12),
                   ),
                   const SizedBox(height: 6),
@@ -317,6 +336,13 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                       onPressed: () => setState(() => _isVideoOff = !_isVideoOff),
                       tooltip: _isVideoOff ? 'Ligar Câmera' : 'Desligar Câmera',
                     ),
+                    // Alternar Vídeo Remoto / Avatar
+                    _buildControlButton(
+                      icon: _showPerformanceVideo ? Icons.smart_display_rounded : Icons.person_pin_rounded,
+                      isActive: _showPerformanceVideo,
+                      onPressed: () => setState(() => _showPerformanceVideo = !_showPerformanceVideo),
+                      tooltip: 'Alternar Vídeo do Músico',
+                    ),
                     // Trocar Câmera
                     _buildControlButton(
                       icon: Icons.flip_camera_ios_rounded,
@@ -328,7 +354,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     FloatingActionButton(
                       heroTag: 'end_call_btn',
                       backgroundColor: Colors.redAccent,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        disposeWebMedia();
+                        Navigator.pop(context);
+                      },
                       child: const Icon(Icons.call_end_rounded, color: Colors.white, size: 28),
                     ),
                   ],

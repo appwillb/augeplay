@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:playauge/core/theme/app_colors.dart';
 import 'package:playauge/core/theme/app_text_styles.dart';
 import 'package:playauge/features/videos/domain/models/musician_video_entity.dart';
+import 'package:playauge/features/videos/presentation/widgets/web_media_view.dart';
 import 'package:playauge/shared/widgets/app_button.dart';
 
 /// Modal / Player Interativo de Vídeo para Solos e Ensaios dos Músicos
@@ -37,7 +38,6 @@ class MusicianVideoPlayerModal extends StatefulWidget {
 class _MusicianVideoPlayerModalState extends State<MusicianVideoPlayerModal> {
   bool _isPlaying = true;
   bool _isMuted = false;
-  double _playbackPosition = 0.35; // Simulação da barra de progresso do vídeo
 
   @override
   Widget build(BuildContext context) {
@@ -89,118 +89,36 @@ class _MusicianVideoPlayerModalState extends State<MusicianVideoPlayerModal> {
             ),
           ),
 
-          // Área Principal do Vídeo (Player com Overlay de Controles)
+          // Área Principal do Vídeo (Player HTML5 Real)
           Expanded(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Thumbnail / Quadro do vídeo
-                Container(
-                  width: double.infinity,
-                  color: Colors.black,
-                  child: Image.network(
-                    v.thumbnailUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.surfaceElevated,
-                      child: const Center(
-                        child: Icon(Icons.videocam_rounded, size: 64, color: AppColors.textSecondary),
-                      ),
-                    ),
+                Positioned.fill(
+                  child: createVideoPlayerView(
+                    viewId: 'modal_${v.id}',
+                    videoUrl: v.videoUrl,
+                    isPlaying: _isPlaying,
+                    isMuted: _isMuted,
                   ),
                 ),
 
-                // Gradiente escuro para legibilidade dos controles
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withOpacity(0.2),
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.85),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                ),
-
-                // Botão Central de Play / Pause
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isPlaying = !_isPlaying;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
-                    ),
-                    child: Icon(
-                      _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                      color: AppColors.primary,
-                      size: 40,
-                    ),
-                  ),
-                ),
-
-                // Controles Laterais (Curtir, Mute, Volume)
+                // Controles Rápidos flutuantes
                 Positioned(
-                  right: 16,
-                  bottom: 50,
-                  child: Column(
+                  bottom: 12,
+                  right: 12,
+                  child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(
-                          _isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
-                          color: Colors.white,
-                        ),
+                        style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                        icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up, color: Colors.white, size: 20),
                         onPressed: () => setState(() => _isMuted = !_isMuted),
                       ),
-                      const SizedBox(height: 12),
-                      Column(
-                        children: [
-                          const Icon(Icons.favorite, color: Colors.redAccent, size: 28),
-                          const SizedBox(height: 4),
-                          Text('${v.likesCount}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Column(
-                        children: [
-                          const Icon(Icons.remove_red_eye_rounded, color: Colors.white70, size: 24),
-                          const SizedBox(height: 4),
-                          Text('${v.viewsCount}', style: const TextStyle(fontSize: 12, color: Colors.white70)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Barra de Progresso do Vídeo
-                Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: 12,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 3,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
-                          activeTrackColor: AppColors.primary,
-                          inactiveTrackColor: Colors.white24,
-                          thumbColor: AppColors.primary,
-                        ),
-                        child: Slider(
-                          value: _playbackPosition,
-                          onChanged: (val) => setState(() => _playbackPosition = val),
-                        ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                        icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white, size: 20),
+                        onPressed: () => setState(() => _isPlaying = !_isPlaying),
                       ),
                     ],
                   ),
@@ -209,13 +127,10 @@ class _MusicianVideoPlayerModalState extends State<MusicianVideoPlayerModal> {
             ),
           ),
 
-          // Rodapé com Descrição e Botão "Contratar Músico"
+          // Informações do Músico e Botão de Contratação
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              border: Border(top: BorderSide(color: AppColors.surfaceBorder)),
-            ),
+            padding: const EdgeInsets.all(20),
+            color: AppColors.surfaceElevated,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -224,24 +139,35 @@ class _MusicianVideoPlayerModalState extends State<MusicianVideoPlayerModal> {
                 Text(
                   v.description,
                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(
-                      child: AppButton(
-                        label: 'Contratar ou Convidar Músico',
-                        icon: Icons.handshake_rounded,
+                    Row(
+                      children: [
+                        const Icon(Icons.favorite_rounded, color: Colors.redAccent, size: 18),
+                        const SizedBox(width: 4),
+                        Text('${v.likesCount}', style: AppTextStyles.bodySmall),
+                      ],
+                    ),
+                    const SizedBox(width: 16),
+                    Row(
+                      children: [
+                        const Icon(Icons.visibility_rounded, color: AppColors.textSecondary, size: 18),
+                        const SizedBox(width: 4),
+                        Text('${v.viewsCount} visualizações', style: AppTextStyles.bodySmall),
+                      ],
+                    ),
+                    const Spacer(),
+                    if (widget.onInviteMusician != null)
+                      AppButton(
+                        label: 'Convidar para Show',
+                        icon: Icons.calendar_today_rounded,
                         onPressed: () {
                           Navigator.pop(context);
-                          if (widget.onInviteMusician != null) {
-                            widget.onInviteMusician!();
-                          }
+                          widget.onInviteMusician!();
                         },
                       ),
-                    ),
                   ],
                 ),
               ],
