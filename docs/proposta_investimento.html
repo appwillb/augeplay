@@ -2,22 +2,24 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>PlayAuge — Proposta de Investimento e Participação Societária</title>
+  <title>PlayAuge — Proposta de Investimento e Expansão Fonográfica</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0B0D13;
-      --surface: #131722;
-      --surface-elevated: #1B2130;
+      --bg: #0A0D14;
+      --card-bg: #111622;
+      --card-inner: #171E2E;
       --border: rgba(255, 255, 255, 0.08);
-      --border-gold: rgba(255, 184, 0, 0.35);
-      --primary: #FFB800;
-      --primary-light: #FFD056;
-      --primary-glow: rgba(255, 184, 0, 0.15);
-      --secondary: #8B5CF6;
-      --accent-green: #10B981;
+      --border-accent: rgba(255, 184, 0, 0.3);
+      --gold: #FFB800;
+      --gold-light: #FDE047;
+      --gold-glow: rgba(255, 184, 0, 0.12);
+      --purple: #8B5CF6;
+      --green: #10B981;
+      --blue: #38BDF8;
+      --red: #F43F5E;
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
@@ -33,7 +35,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.35;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -62,7 +64,7 @@
       width: 210mm;
       height: 297mm;
       max-height: 297mm;
-      padding: 16mm 18mm 14mm 18mm;
+      padding: 11mm 13mm 9mm 13mm;
       margin: 0 auto;
       background: var(--bg);
       box-sizing: border-box;
@@ -73,681 +75,615 @@
       justify-content: space-between;
     }
 
-    /* Elementos de Decoração / Glow */
-    .glow-top-right {
+    /* Background accents */
+    .glow-tr {
       position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 260px;
-      height: 260px;
-      background: radial-gradient(circle, rgba(255, 184, 0, 0.12) 0%, transparent 70%);
+      top: -40px;
+      right: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.14) 0%, transparent 70%);
       pointer-events: none;
     }
-
-    .glow-bottom-left {
+    .glow-bl {
       position: absolute;
-      bottom: -60px;
-      left: -60px;
-      width: 240px;
-      height: 240px;
+      bottom: -40px;
+      left: -40px;
+      width: 220px;
+      height: 220px;
       background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    /* Cabeçalho Superior em cada página */
-    .page-header {
+    /* Header */
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 12px;
+      padding-bottom: 7px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
-
-    .brand-logo {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
-
-    .logo-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--primary), #D97706);
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--gold), #D97706);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
       color: #000;
-      font-size: 16px;
-      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.3);
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(255, 184, 0, 0.3);
     }
-
-    .brand-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #FFF;
-    }
-
-    .brand-name span {
-      color: var(--primary);
-    }
-
-    .doc-confidential {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--primary);
-      background: var(--primary-glow);
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border-gold);
-      font-weight: 600;
-    }
-
-    /* Rodapé em cada página */
-    .page-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-      font-size: 9px;
-      color: var(--text-dim);
-    }
-
-    /* Títulos e Tipografia */
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #FFF;
-      letter-spacing: -0.5px;
-    }
-
-    h2 {
+    .brand-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 17px;
       font-weight: 700;
       color: #FFF;
+      letter-spacing: -0.5px;
+    }
+    .brand-title span {
+      color: var(--gold);
+    }
+    .badge-confidential {
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gold);
+      background: var(--gold-glow);
+      border: 1px solid var(--border-accent);
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+      font-size: 8.5px;
+      color: var(--text-dim);
+    }
+
+    /* Section Headings */
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFF;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
+      gap: 6px;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+    .section-title span.icon {
+      color: var(--gold);
+      font-size: 13px;
     }
 
-    h2 .icon {
-      color: var(--primary);
-    }
-
-    p {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .lead-text {
-      font-size: 12.5px;
-      color: #E2E8F0;
-      line-height: 1.55;
-    }
-
-    /* Grid & Cards */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-    }
-
+    /* Grids */
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 7px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
     }
 
+    /* Cards */
     .card {
-      background: var(--surface);
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
+      border-radius: 9px;
+      padding: 8px 10px;
+    }
+    .card-highlight {
+      background: linear-gradient(145deg, rgba(255, 184, 0, 0.08), var(--card-bg));
+      border: 1px solid var(--border-accent);
     }
 
-    .card.highlight {
-      border-color: var(--border-gold);
-      background: linear-gradient(145deg, rgba(255, 184, 0, 0.08), var(--surface));
-    }
-
-    .metric-box {
-      background: var(--surface);
+    /* Metric Box */
+    .metric-card {
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 8px;
+      padding: 7px 6px;
       text-align: center;
     }
-
-    .metric-value {
+    .metric-card.gold-border {
+      border-color: var(--border-accent);
+      background: linear-gradient(180deg, rgba(255, 184, 0, 0.09) 0%, var(--card-bg) 100%);
+    }
+    .metric-num {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--primary);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
       line-height: 1.1;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
-
-    .metric-label {
-      font-size: 10px;
+    .metric-desc {
+      font-size: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
       color: var(--text-dim);
-      font-weight: 600;
     }
 
-    .feature-item {
+    /* Feature Box */
+    .feature-row {
       display: flex;
-      gap: 10px;
-      margin-bottom: 9px;
       align-items: flex-start;
+      gap: 7px;
     }
-
-    .feature-icon {
-      width: 24px;
-      height: 24px;
-      min-width: 24px;
+    .f-icon {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
       border-radius: 6px;
-      background: var(--surface-elevated);
+      background: var(--card-inner);
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      color: var(--primary);
-      margin-top: 1px;
-    }
-
-    .feature-content h4 {
-      font-size: 12px;
-      font-weight: 700;
-      color: #FFF;
-      margin-bottom: 2px;
-    }
-
-    .feature-content p {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* Tabela de Investimento */
-    table.invest-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 10px 0;
       font-size: 11px;
     }
-
-    table.invest-table th {
-      background: var(--surface-elevated);
-      color: var(--primary);
-      text-align: left;
-      padding: 9px 12px;
+    .f-content h5 {
+      font-size: 10.5px;
       font-weight: 700;
-      border-bottom: 1px solid var(--border-gold);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      color: #FFF;
+      margin-bottom: 1px;
+    }
+    .f-content p {
+      font-size: 9px;
+      color: var(--text-muted);
+      line-height: 1.3;
     }
 
-    table.invest-table td {
-      padding: 9px 12px;
+    /* Table */
+    table.table-compact {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5px;
+      margin: 4px 0 6px 0;
+    }
+    table.table-compact th {
+      background: var(--card-inner);
+      color: var(--gold);
+      font-weight: 700;
+      text-align: left;
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--border-accent);
+      font-size: 8.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    table.table-compact td {
+      padding: 5px 8px;
       border-bottom: 1px solid var(--border);
       color: var(--text);
     }
-
-    table.invest-table tr.selected {
-      background: rgba(255, 184, 0, 0.08);
-      font-weight: 600;
+    table.table-compact tr.highlight-row {
+      background: rgba(255, 184, 0, 0.09);
+      font-weight: 700;
+    }
+    table.table-compact tr.highlight-row td:first-child {
+      border-left: 3px solid var(--gold);
     }
 
-    table.invest-table tr.selected td:first-child {
-      border-left: 3px solid var(--primary);
-    }
-
-    .badge-status {
+    /* Badges */
+    .badge-pill {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 7.5px;
       font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-
-    .badge-live {
+    .badge-green {
       background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-green);
+      color: var(--green);
       border: 1px solid rgba(16, 185, 129, 0.4);
     }
-
-    .badge-next {
+    .badge-purple {
       background: rgba(139, 92, 246, 0.15);
-      color: var(--secondary);
+      color: var(--purple);
       border: 1px solid rgba(139, 92, 246, 0.4);
     }
+    .badge-gold {
+      background: var(--gold-glow);
+      color: var(--gold);
+      border: 1px solid var(--border-accent);
+    }
 
-    .pill-highlight {
-      background: var(--primary-glow);
-      color: var(--primary);
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 10px;
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: var(--card-inner);
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 2px;
     }
   </style>
 </head>
 <body>
 
   <!-- ========================================================================= -->
-  <!-- PÁGINA 1: CAPA EXECUTIVA & TESE DO NEGÓCIO                                -->
+  <!-- PÁGINA 1: VISÃO EXECUTIVA, PRODUTO EM OPERAÇÃO E INFRAESTRUTURA          -->
   <!-- ========================================================================= -->
   <div class="page">
-    <div class="glow-top-right"></div>
-    <div class="glow-bottom-left"></div>
+    <div class="glow-tr"></div>
+    <div class="glow-bl"></div>
 
-    <div>
-      <div class="page-header">
-        <div class="brand-logo">
-          <div class="logo-badge">P</div>
-          <div class="brand-name">Play<span>Auge</span></div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <!-- Header -->
+      <div class="header">
+        <div class="brand">
+          <div class="brand-logo">P</div>
+          <div class="brand-title">Play<span>Auge</span></div>
         </div>
-        <div class="doc-confidential">Memorando de Investimento • Seed Round 2026</div>
+        <div class="badge-confidential">Memorando Executivo de Investimento • Seed 2026</div>
       </div>
 
-      <!-- Banner de Destaque / Título -->
-      <div style="margin-top: 10px; margin-bottom: 18px;">
-        <div style="display: inline-block; background: var(--primary-glow); border: 1px solid var(--border-gold); padding: 4px 12px; border-radius: 16px; margin-bottom: 10px;">
-          <span style="color: var(--primary); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">⚡ Oportunidade de Investimento em Startup MusicTech</span>
+      <!-- Hero Banner -->
+      <div class="card card-highlight" style="padding: 9px 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="display: inline-block; font-size: 8.5px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px;">
+              ⚡ Startup MusicTech • Validação em Produção
+            </div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 800; line-height: 1.2; color: #FFF; letter-spacing: -0.4px;">
+              A Revolução na Contratação Musical ao Vivo e Distribuição Global
+            </h1>
+          </div>
+          <span class="badge-pill badge-green" style="margin-top: 2px;">100% Funcional</span>
         </div>
-        <h1>Acelerando o Ecossistema Musical com Tecnologia, Contratação Direta e Distribuição Global</h1>
-        <p class="lead-text" style="margin-top: 8px;">
-          A <strong>PlayAuge</strong> é a plataforma definitiva que conecta contratantes, músicos profissionais e compositores, eliminando intermediários, garantindo o pagamento de cachês em tempo real e abrindo a distribuição musical autoral para <strong>mais de 460 plataformas globais</strong>.
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+          A <strong>PlayAuge</strong> conecta contratantes, músicos profissionais e compositores em um único ecossistema tecnológico. Elimina a informalidade, garante acordos de cachê por chamada de vídeo em tempo real e expande a cadeia para distribuição direta em <strong>mais de 460 plataformas de streaming mundiais</strong>.
         </p>
       </div>
 
-      <!-- 4 Indicadores Chave da Rodada -->
-      <div class="grid-4" style="margin-bottom: 18px;">
-        <div class="metric-box">
-          <div class="metric-value">R$ 250K</div>
-          <div class="metric-label">Aporte Mínimo (5%)</div>
+      <!-- 4 Métricas Chave -->
+      <div class="grid-4">
+        <div class="metric-card gold-border">
+          <div class="metric-num">R$ 250K</div>
+          <div class="metric-desc">Aporte Base (5,0%)</div>
         </div>
-        <div class="metric-box">
-          <div class="metric-value">R$ 5,0 Mi</div>
-          <div class="metric-label">Valuation Post-Money</div>
+        <div class="metric-card">
+          <div class="metric-num">R$ 5,0 Mi</div>
+          <div class="metric-desc">Valuation Post-Money</div>
         </div>
-        <div class="metric-box">
-          <div class="metric-value">460+</div>
-          <div class="metric-label">Plataformas de Streaming</div>
+        <div class="metric-card gold-border">
+          <div class="metric-num">460+</div>
+          <div class="metric-desc">Plataformas Streaming</div>
         </div>
-        <div class="metric-box">
-          <div class="metric-value">1,2 Mi+</div>
-          <div class="metric-label">Mercado Alvo no Brasil</div>
+        <div class="metric-card">
+          <div class="metric-num">1,2 Mi+</div>
+          <div class="metric-desc">Músicos & Autores BR</div>
         </div>
       </div>
 
       <!-- Problema vs Solução -->
-      <div class="grid-2" style="margin-bottom: 16px;">
-        <div class="card" style="border-left: 3px solid #EF4444;">
-          <h3 style="font-size: 13px; color: #EF4444; margin-bottom: 6px; font-weight: 700;">❌ O Problema do Mercado Tradicional</h3>
-          <ul style="font-size: 11px; color: var(--text-muted); padding-left: 14px; line-height: 1.55;">
-            <li><strong>Calotes e Incerteza de Cachê:</strong> Músicos tocam sem contrato formal e sofrem com atrasos ou cancelamentos sem ressarcimento.</li>
-            <li><strong>Dificuldade Logística para Shows:</strong> Artistas que viajam para turnês não encontram instrumentistas confiáveis na cidade de destino.</li>
-            <li><strong>Compositores Bloqueados:</strong> Músicas inéditas ficam engavetadas sem canal direto para venda a cantores nem distribuição digital.</li>
+      <div class="grid-2">
+        <div class="card" style="border-left: 3px solid var(--red);">
+          <div style="font-size: 10.5px; font-weight: 700; color: var(--red); margin-bottom: 4px;">❌ Gargalos do Mercado Tradicional</div>
+          <ul style="font-size: 9px; color: var(--text-muted); padding-left: 13px; line-height: 1.4;">
+            <li><strong>Insegurança de Cachê:</strong> Músicos tocam sem contrato formal e sofrem com calotes ou atrasos recorrentes.</li>
+            <li><strong>Dificuldade de Contratação:</strong> Falta de músicos verificados por cidade em turnês e substituições urgentes.</li>
+            <li><strong>Composições Engavetadas:</strong> Autores sem canal direto para vender faixas a artistas nem distribuir fonogramas.</li>
           </ul>
         </div>
-        <div class="card" style="border-left: 3px solid var(--accent-green);">
-          <h3 style="font-size: 13px; color: var(--accent-green); margin-bottom: 6px; font-weight: 700;">✅ A Solução Integrada PlayAuge</h3>
-          <ul style="font-size: 11px; color: var(--text-muted); padding-left: 14px; line-height: 1.55;">
-            <li><strong>Audição ao Vivo & Acordo Direto:</strong> Chamada de vídeo WebRTC com fechamento de cachê e pré-contrato registrado instantaneamente.</li>
-            <li><strong>Radar de Músicos com Geolocalização:</strong> Busca por raio (km), instrumento, gênero, disponibilidade e avaliação pós-show.</li>
-            <li><strong>Hub Global do Compositor:</strong> Registro de composições e distribuição direta para 460+ plataformas de streaming mundiais.</li>
+        <div class="card" style="border-left: 3px solid var(--green);">
+          <div style="font-size: 10.5px; font-weight: 700; color: var(--green); margin-bottom: 4px;">✅ A Solução Integrada PlayAuge</div>
+          <ul style="font-size: 9px; color: var(--text-muted); padding-left: 13px; line-height: 1.4;">
+            <li><strong>Audição ao Vivo & Pré-Acordo:</strong> Chamada de vídeo WebRTC com fechamento formal de cachê na hora.</li>
+            <li><strong>Radar com Geolocalização:</strong> Busca por proximidade (km), instrumento, rider técnico e avaliações reais.</li>
+            <li><strong>Hub Global do Compositor:</strong> Registro de obras e distribuição em massa para 460+ DSPs de streaming.</li>
           </ul>
         </div>
       </div>
 
-      <!-- Tração e Prontidão Tecnológica -->
-      <div class="card highlight">
-        <h3 style="font-size: 12.5px; color: #FFF; margin-bottom: 6px; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
-          <span>🚀 Estágio Atual: Aplicação Pronta, Testada e em Produção</span>
-          <span class="badge-status badge-live">100% Funcional</span>
-        </h3>
-        <p style="font-size: 11px; color: var(--text-muted);">
-          Diferente de projetos apenas no papel, a PlayAuge já conta com <strong>arquitetura completa implementada</strong>, aplicação web e mobile responsiva (PWA), banco de dados relacional PostgreSQL, infraestrutura em nuvem, 53 testes automatizados aprovados e sistema de chamada e sinalização em tempo real ativo no ar em <em>staysoft.online</em>.
-        </p>
+      <!-- Funcionalidades 100% Prontas -->
+      <div>
+        <div class="section-title"><span class="icon">💻</span> Recursos Já Construídos e em Operação no Aplicativo</div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">📞</div>
+              <div class="f-content">
+                <h5>Audição por Vídeo & Acordo</h5>
+                <p>Chamada WebRTC P2P de alta definição com chat integrado e formalização imediata da proposta de cachê.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">📍</div>
+              <div class="f-content">
+                <h5>Radar & Geolocalização</h5>
+                <p>Filtros por raio em km, instrumento, estilo, avaliação por estrelas e disponibilidade em tempo real.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">🎸</div>
+              <div class="f-content">
+                <h5>Perfil & Rider Técnico</h5>
+                <p>Portfólio com fotos, vídeos, rider de palco, pedaleiras, histórico de shows e cachê base individual.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">▶️</div>
+              <div class="f-content">
+                <h5>Player em 2º Plano</h5>
+                <p>MiniPlayer de streaming persistente para contratantes ouvirem faixas e solos enquanto navegam no app.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">📅</div>
+              <div class="f-content">
+                <h5>Gestor de Ensaios</h5>
+                <p>Organização de repertório com tom, afinação, BPM de clique e presença confirmada dos músicos.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feature-row">
+              <div class="f-icon">💼</div>
+              <div class="f-content">
+                <h5>Mural de Vagas & Gigs</h5>
+                <p>Feed de oportunidades urgentes para substituições em shows, bandas em turnê e eventos corporativos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engenharia & Tecnologia -->
+      <div class="card" style="background: var(--card-inner); border-color: rgba(255,255,255,0.12); padding: 8px 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+          <div style="font-size: 10px; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 5px;">
+            <span>🛡️ Infraestrutura Técnica & Homologação</span>
+          </div>
+          <span style="font-size: 8.5px; color: var(--gold); font-weight: 700;">Deploy ativo em produção: staysoft.online</span>
+        </div>
+        <div class="grid-3" style="font-size: 8.5px; color: var(--text-muted); line-height: 1.35;">
+          <div><strong style="color: #FFF;">• WebRTC P2P + SSE:</strong> Sinalização em nuvem e comunicação em tempo real de baixa latência (&lt;100ms).</div>
+          <div><strong style="color: #FFF;">• Flutter Web / PWA:</strong> Responsivo para desktop, Android e iOS com suporte a offline caching seguro.</div>
+          <div><strong style="color: #FFF;">• Cloud & CI/CD:</strong> Docker, Nginx, PostgreSQL com 53 testes automatizados aprovados no pipeline.</div>
+        </div>
       </div>
     </div>
 
-    <div class="page-footer">
-      <div>PlayAuge Tecnologia Musical Ltda. • Proposta Comercial & de Investimento</div>
-      <div>Página 1 de 4</div>
+    <!-- Footer -->
+    <div class="footer">
+      <div>PlayAuge Tecnologia Musical Ltda. • Proposta de Investimento e Expansão</div>
+      <div>Página 1 de 2</div>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PÁGINA 2: O PRODUTO ATUAL — TECNOLOGIAS E RECURSOS ATIVOS                 -->
+  <!-- PÁGINA 2: EXPANSÃO COMPOSITORES, VALUATION, TERMOS E ALOCAÇÃO DE CAPITAL   -->
   <!-- ========================================================================= -->
   <div class="page">
-    <div class="glow-top-right"></div>
+    <div class="glow-tr"></div>
+    <div class="glow-bl"></div>
 
-    <div>
-      <div class="page-header">
-        <div class="brand-logo">
-          <div class="logo-badge">P</div>
-          <div class="brand-name">Play<span>Auge</span></div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <!-- Header -->
+      <div class="header">
+        <div class="brand">
+          <div class="brand-logo">P</div>
+          <div class="brand-title">Play<span>Auge</span></div>
         </div>
-        <div class="doc-confidential">Módulo Operacional • Arquitetura Ativa</div>
+        <div class="badge-confidential">Roadmap Estratégico & Cap Table • Seed 2026</div>
       </div>
 
-      <h2><span class="icon">💻</span> O Que Já Está Construído e em Operação</h2>
-      <p style="margin-bottom: 14px;">
-        A aplicação conta com um ecossistema modular robusto cobrindo todo o ciclo de vida da prestação de serviços musicais, desde a descoberta até a execução e pagamento:
-      </p>
-
-      <div class="grid-2" style="margin-bottom: 14px;">
-        <!-- Card 1: Audição Vídeo -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">📞</div>
-            <div class="feature-content">
-              <h4>Audição ao Vivo & Negociação de Cachê</h4>
-              <p>Chamada de vídeo em tempo real (WebRTC P2P + Cloud SSE). Contratante e músico alinham repertório ao vivo, negociam a proposta e firmam o contrato na própria tela.</p>
-            </div>
+      <!-- Novo Módulo: Compositores e 460+ Plataformas -->
+      <div class="card card-highlight" style="padding: 9px 11px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+          <div class="section-title" style="margin-bottom: 0;">
+            <span class="icon">🎼</span> Expansão Estratégica: Hub de Compositores & Distribuição Global
           </div>
+          <span class="badge-pill badge-purple">Roadmap Imediato</span>
         </div>
-
-        <!-- Card 2: Radar e Geolocalização -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">📍</div>
-            <div class="feature-content">
-              <h4>Radar Musical & Filtro Multi-critério</h4>
-              <p>Mecanismo inteligente de busca por proximidade geográfica (raio em km), instrumento, gênero musical, avaliação por estrelas e disponibilidade confirmada para a data.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3: Perfil e Rider Técnico -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">🎸</div>
-            <div class="feature-content">
-              <h4>Perfil Profissional & Cachê Base</h4>
-              <p>Vitrine individual com fotos, vídeos de solos, rider técnico (equipamentos, pedais, in-ear sem fio), histórico de gigs e valor de cachê dinâmico persistido em storage seguro.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 4: Player de Streaming -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">▶️</div>
-            <div class="feature-content">
-              <h4>Player de Streaming Contínuo (MiniPlayer)</h4>
-              <p>Mecanismo de áudio persistente no app que permite aos produtores ouvir faixas, guias autorais e gravações de músicos enquanto navegam em outras abas.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 5: Gestor de Ensaios -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">📅</div>
-            <div class="feature-content">
-              <h4>Gestor de Ensaios & Repertório</h4>
-              <p>Ferramenta de organização de ensaios com controle de lista de músicas, tom acordado, afinação, BPM de clique e presença confirmada dos integrantes da banda.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 6: Mural de Vagas e Feed -->
-        <div class="card">
-          <div class="feature-item">
-            <div class="feature-icon">💼</div>
-            <div class="feature-content">
-              <h4>Mural de Oportunidades & Vagas de Shows</h4>
-              <p>Feed interativo onde artistas e bandas publicam vagas imediatas para substituições, turnês e eventos corporativos, com candidatura em 1 clique.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Detalhamento de Arquitetura e Engenharia -->
-      <h2><span class="icon">🛡️</span> Robustez Técnica e Infraestrutura Pronta</h2>
-      <div class="card" style="margin-bottom: 12px; background: var(--surface-elevated);">
-        <div class="grid-3" style="text-align: left;">
-          <div>
-            <div style="font-size: 11px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Mobile & Web Unificado</div>
-            <p style="font-size: 10px;">Flutter Web & PWA responsivo com adaptação total a iOS e Android, sem necessidade de downloads pesados.</p>
-          </div>
-          <div>
-            <div style="font-size: 11px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Sinalização em Nuvem</div>
-            <p style="font-size: 10px;">Tripla camada de eventos em tempo real (PeerJS STUN + Server-Sent Events + BroadcastChannel) com latência &lt; 100ms.</p>
-          </div>
-          <div>
-            <div style="font-size: 11px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Deploy Automatizado</div>
-            <p style="font-size: 10px;">Pipeline de CI/CD via Coolify e Docker, conteinerizado com Nginx otimizado e banco relacional PostgreSQL.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="page-footer">
-      <div>PlayAuge Tecnologia Musical Ltda. • Proposta Comercial & de Investimento</div>
-      <div>Página 2 de 4</div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- PÁGINA 3: O NOVO MÓDULO — COMPOSITORES & DISTRIBUIÇÃO EM 460+ PLATAFORMAS -->
-  <!-- ========================================================================= -->
-  <div class="page">
-    <div class="glow-top-right"></div>
-    <div class="glow-bottom-left"></div>
-
-    <div>
-      <div class="page-header">
-        <div class="brand-logo">
-          <div class="logo-badge">P</div>
-          <div class="brand-name">Play<span>Auge</span></div>
-        </div>
-        <div class="doc-confidential">Expansão Estratégica • Módulo Compositores</div>
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <h2><span class="icon">🎼</span> O Novo Módulo: Compositores & Distribuição Digital</h2>
-        <span class="badge-status badge-next">Próxima Etapa do Roadmap</span>
-      </div>
-      <p style="margin-bottom: 14px;">
-        A grande alavanca de escala e receita recorrente da PlayAuge será o <strong>Hub do Compositor com Distribuição Global</strong>, transformando o app no distribuidor digital preferido de criadores independentes e editoras:
-      </p>
-
-      <!-- 3 Pilares do Módulo de Composição -->
-      <div class="grid-3" style="margin-bottom: 14px;">
-        <div class="card highlight">
-          <div style="font-size: 18px; margin-bottom: 6px;">✍️</div>
-          <h4 style="font-size: 12px; font-weight: 700; color: #FFF; margin-bottom: 4px;">Cofre Autoral & Registro</h4>
-          <p style="font-size: 10.5px;">Upload seguro de letras, cifras e áudio-guia com carimbo de tempo digital (timestamp) que comprova a anterioridade e protege os direitos morais do autor.</p>
-        </div>
-
-        <div class="card highlight">
-          <div style="font-size: 18px; margin-bottom: 6px;">🌐</div>
-          <h4 style="font-size: 12px; font-weight: 700; color: #FFF; margin-bottom: 4px;">460+ Plataformas Globais</h4>
-          <p style="font-size: 10.5px;">Distribuição automatizada com 1 clique para Spotify, Apple Music, Deezer, TikTok, YouTube Music, Amazon, Tidal, Tencent, Instagram e mais de 450 parceiros.</p>
-        </div>
-
-        <div class="card highlight">
-          <div style="font-size: 18px; margin-bottom: 6px;">💰</div>
-          <h4 style="font-size: 12px; font-weight: 700; color: #FFF; margin-bottom: 4px;">Split Sheet & Royalties</h4>
-          <p style="font-size: 10.5px;">Divisão automática de royalties entre letrista, melodista, produtor e intérprete, com geração de ISRC/ISWC e liquidação direta em conta bancária.</p>
-        </div>
-      </div>
-
-      <!-- Vitrine de Negociação Direta com Artistas -->
-      <div class="card" style="margin-bottom: 14px;">
-        <h4 style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">🤝 Marketplace B2B: Venda e Liberação Direta para Artistas</h4>
-        <p style="font-size: 11px;">
-          Além do streaming, os compositores expõem suas músicas na <strong>Vitrine de Obras</strong>. Cantores e duplas famosas escutam a guia no próprio app e podem comprar com exclusividade ou solicitar liberação de gravação com contrato assinado digitalmente dentro da plataforma, gerando receita imediata.
+        <p style="font-size: 9.5px; color: var(--text-muted); line-height: 1.35; margin-bottom: 7px;">
+          O PlayAuge agora incorpora a ferramenta que viabiliza a maior fonte de receita recorrente da indústria: a gestão, o licenciamento e a distribuição direta de composições autorais.
         </p>
+
+        <div class="grid-4">
+          <div class="card" style="background: var(--card-bg); padding: 7px;">
+            <div style="font-size: 13px; margin-bottom: 2px;">🌐</div>
+            <div style="font-size: 10px; font-weight: 700; color: #FFF; margin-bottom: 2px;">460+ Plataformas</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Submissão simultânea para Spotify, Apple Music, Deezer, TikTok, YouTube Music, Tencent, Tidal e mais de 450 parceiros.</p>
+          </div>
+          <div class="card" style="background: var(--card-bg); padding: 7px;">
+            <div style="font-size: 13px; margin-bottom: 2px;">✍️</div>
+            <div style="font-size: 10px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Cofre Autoral</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Upload de áudios-guia, letras e cifras com timestamp digital criptografado, garantindo prova irrefutável de autoria.</p>
+          </div>
+          <div class="card" style="background: var(--card-bg); padding: 7px;">
+            <div style="font-size: 13px; margin-bottom: 2px;">💰</div>
+            <div style="font-size: 10px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Split de Royalties</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Divisão automatizada de lucros entre letrista, intérprete e produtor, com geração de ISRC/ISWC e liquidação bancária.</p>
+          </div>
+          <div class="card" style="background: var(--card-bg); padding: 7px;">
+            <div style="font-size: 13px; margin-bottom: 2px;">🤝</div>
+            <div style="font-size: 10px; font-weight: 700; color: #FFF; margin-bottom: 2px;">Vitrine B2B de Músicas</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Mercado restrito onde cantores e empresários ouvem inéditas e compram liberação com contrato digital.</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Modelo de Negócios / Monetização -->
-      <h2><span class="icon">📈</span> Modelo de Receita da Plataforma (Monetização)</h2>
-      <div class="grid-3" style="margin-bottom: 10px;">
-        <div class="card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">1. Take-Rate de Gigs (10% a 15%)</div>
-          <p style="font-size: 10px;">Taxa de serviço retida sobre a contratação de shows e pagamentos de cachês intermediados com garantia anti-calote.</p>
+      <!-- Monetização e Receita -->
+      <div>
+        <div class="section-title"><span class="icon">📈</span> Fontes de Monetização e Alavancas de Lucro</div>
+        <div class="grid-3">
+          <div class="card">
+            <div style="font-size: 10px; font-weight: 700; color: var(--gold); margin-bottom: 2px;">1. Intermediação de Shows (10-15%)</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Taxa de serviço cobrada sobre a garantia e liquidação de cachês transacionados com segurança na plataforma.</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 10px; font-weight: 700; color: var(--purple); margin-bottom: 2px;">2. Distribuição & Royalties (15%)</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Comissão sobre o faturamento de streaming e taxas anuais de distribuição fonográfica para as 460+ plataformas.</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 10px; font-weight: 700; color: var(--green); margin-bottom: 2px;">3. Assinatura PlayAuge Pro</div>
+            <p style="font-size: 8.5px; color: var(--text-muted); line-height: 1.3;">Assinaturas mensais (R$ 29,90 a R$ 49,90) para músicos e compositores com destaque no radar e selo de verificação.</p>
+          </div>
         </div>
-        <div class="card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--secondary); margin-bottom: 4px;">2. Distribuição Digital (Fatia de Royalties)</div>
-          <p style="font-size: 10px;">Percentual de 15% sobre o faturamento de streaming das 460+ plataformas + planos anuais de distribuição ilimitada.</p>
+      </div>
+
+      <!-- Proposta Financeira e Regra de Escala -->
+      <div>
+        <div class="section-title"><span class="icon">💎</span> Termos do Investimento & Estrutura de Participação</div>
+        <table class="table-compact">
+          <thead>
+            <tr>
+              <th>Opção de Entrada</th>
+              <th>Participação (Equity)</th>
+              <th>Aporte Financeiro</th>
+              <th>Valuation Implícito (Post-Money)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td><strong>Cota Proposta Base</strong></td>
+              <td><strong style="color: var(--gold); font-size: 11px;">5,0%</strong></td>
+              <td><strong style="color: var(--gold); font-size: 11px;">R$ 250.000,00</strong></td>
+              <td>R$ 5.000.000,00</td>
+              <td><span class="badge-pill badge-gold">Disponível</span></td>
+            </tr>
+            <tr>
+              <td>Cota Dobrada</td>
+              <td><strong>10,0%</strong></td>
+              <td><strong>R$ 500.000,00</strong></td>
+              <td>R$ 5.000.000,00</td>
+              <td><span class="badge-pill badge-gold">Disponível</span></td>
+            </tr>
+            <tr>
+              <td>Cota Estratégica</td>
+              <td><strong>15,0%</strong></td>
+              <td><strong>R$ 750.000,00</strong></td>
+              <td>R$ 5.000.000,00</td>
+              <td><span class="badge-pill badge-gold">Disponível</span></td>
+            </tr>
+            <tr>
+              <td>Cota Institucional</td>
+              <td><strong>20,0%</strong></td>
+              <td><strong>R$ 1.000.000,00</strong></td>
+              <td>R$ 5.000.000,00</td>
+              <td><span class="badge-pill badge-gold">Disponível</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Regra de Escala Destacada -->
+        <div class="card" style="background: rgba(255, 184, 0, 0.08); border: 1px solid var(--border-accent); padding: 6px 10px;">
+          <div style="font-size: 9.5px; color: #FFF; font-weight: 700;">
+            📌 Regra Progressiva Transparente: <span style="color: var(--gold);">A cada 5,0% de participação societária = R$ 250.000,00</span>
+          </div>
+          <p style="font-size: 8.5px; color: var(--text-muted); margin-top: 2px;">
+            Garante paridade e valorização linear para o investidor, com entrada formalizada via Mútuo Conversível em Ações / SAFE, direito a assento de observador e relatórios financeiros trimestrais.
+          </p>
         </div>
-        <div class="card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--accent-green); margin-bottom: 4px;">3. Assinatura PlayAuge Pro</div>
-          <p style="font-size: 10px;">Plano mensal (R$ 29,90 a R$ 49,90/mês) para músicos que buscam destaque no topo do radar, selo de verificação e alertas VIP.</p>
+      </div>
+
+      <!-- Destinação dos Recursos (Alocação de Capital) -->
+      <div>
+        <div class="section-title"><span class="icon">🎯</span> Alocação do Capital Investido (R$ 250.000,00)</div>
+        <div class="grid-4">
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-bottom: 2px;">
+              <span style="color: #FFF;">Servidores & Nuvem</span>
+              <span style="color: var(--gold);">35%</span>
+            </div>
+            <div style="font-size: 11px; font-weight: 800; color: #FFF; margin-bottom: 2px;">R$ 87.500</div>
+            <p style="font-size: 8px; color: var(--text-muted); line-height: 1.25;">Infraestrutura dedicada, streaming de áudio contínuo, nós WebRTC e banco de alta disponibilidade.</p>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 35%; background: var(--gold);"></div></div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-bottom: 2px;">
+              <span style="color: #FFF;">APIs de Distribuição</span>
+              <span style="color: var(--purple);">25%</span>
+            </div>
+            <div style="font-size: 11px; font-weight: 800; color: #FFF; margin-bottom: 2px;">R$ 62.500</div>
+            <p style="font-size: 8px; color: var(--text-muted); line-height: 1.25;">Integração e certificação com hubs agregadores globais para submissão nas 460+ plataformas.</p>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 25%; background: var(--purple);"></div></div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-bottom: 2px;">
+              <span style="color: #FFF;">Marketing & Tração</span>
+              <span style="color: var(--green);">25%</span>
+            </div>
+            <div style="font-size: 11px; font-weight: 800; color: #FFF; margin-bottom: 2px;">R$ 62.500</div>
+            <p style="font-size: 8px; color: var(--text-muted); line-height: 1.25;">Campanhas para aquisição de compositores e instrumentistas de elite; parcerias com estúdios e produtoras.</p>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 25%; background: var(--green);"></div></div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-bottom: 2px;">
+              <span style="color: #FFF;">Jurídico & Giro</span>
+              <span style="color: var(--blue);">15%</span>
+            </div>
+            <div style="font-size: 11px; font-weight: 800; color: #FFF; margin-bottom: 2px;">R$ 37.500</div>
+            <p style="font-size: 8px; color: var(--text-muted); line-height: 1.25;">Compliance fonográfico, termos de cessão e direitos autorais (ECAD/UBC) e reserva operacional de 18 meses.</p>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 15%; background: var(--blue);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fechamento / Call to Action -->
+      <div class="card card-highlight" style="padding: 7px 12px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 10.5px; font-weight: 800; color: #FFF;">Etapas para Fechamento do Aporte</div>
+          <p style="font-size: 8.5px; color: var(--text-muted); margin-top: 1px;">
+            1. Demonstração ao vivo do app em produção • 2. Assinatura do Contrato de Mútuo Conversível • 3. Integralização do Capital
+          </p>
+        </div>
+        <div style="text-align: right; min-width: 130px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--gold);">PlayAuge MusicTech</div>
+          <div style="font-size: 8px; color: var(--text-muted);">staysoft.online</div>
         </div>
       </div>
     </div>
 
-    <div class="page-footer">
-      <div>PlayAuge Tecnologia Musical Ltda. • Proposta Comercial & de Investimento</div>
-      <div>Página 3 de 4</div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- PÁGINA 4: A PROPOSTA DE INVESTIMENTO, VALUATION E TERMOS                 -->
-  <!-- ========================================================================= -->
-  <div class="page">
-    <div class="glow-top-right"></div>
-    <div class="glow-bottom-left"></div>
-
-    <div>
-      <div class="page-header">
-        <div class="brand-logo">
-          <div class="logo-badge">P</div>
-          <div class="brand-name">Play<span>Auge</span></div>
-        </div>
-        <div class="doc-confidential">Termos Financeiros • Cap Table</div>
-      </div>
-
-      <h2><span class="icon">💎</span> Proposta Financeira de Participação Societária</h2>
-      <p style="margin-bottom: 12px;">
-        Buscamos um sócio-investidor estratégico para suprir os custos operacionais de escala, marketing e viabilizar a integração da distribuição digital global:
-      </p>
-
-      <!-- Tabela de Investimento -->
-      <table class="invest-table">
-        <thead>
-          <tr>
-            <th>Cota / Proposta</th>
-            <th>Participação (Equity)</th>
-            <th>Aporte Financeiro</th>
-            <th>Valuation Implícito (Post-Money)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="selected">
-            <td><strong>Proposta Base (Solicitada)</strong></td>
-            <td><span class="pill-highlight">5%</span></td>
-            <td><strong>R$ 250.000,00</strong></td>
-            <td>R$ 5.000.000,00</td>
-          </tr>
-          <tr>
-            <td>Cota Dobrada</td>
-            <td><strong>10%</strong></td>
-            <td><strong>R$ 500.000,00</strong></td>
-            <td>R$ 5.000.000,00</td>
-          </tr>
-          <tr>
-            <td>Cota Estratégica</td>
-            <td><strong>15%</strong></td>
-            <td><strong>R$ 750.000,00</strong></td>
-            <td>R$ 5.000.000,00</td>
-          </tr>
-          <tr>
-            <td>Cota Majoritária da Rodada</td>
-            <td><strong>20%</strong></td>
-            <td><strong>R$ 1.000.000,00</strong></td>
-            <td>R$ 5.000.000,00</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="card" style="margin-bottom: 14px; background: rgba(255, 184, 0, 0.06); border-color: var(--border-gold);">
-        <p style="font-size: 11px; color: #FFF; font-weight: 600;">
-          📌 <strong>Regra Linear de Participação:</strong> Cada <strong>5% de participação societária</strong> corresponde ao aporte de <strong>R$ 250.000,00</strong>, mantendo a proporcionalidade e a integridade de valuation para o investidor.
-        </p>
-      </div>
-
-      <!-- Destinação dos Recursos -->
-      <h2><span class="icon">🎯</span> Destinação do Capital Investido</h2>
-      <div class="grid-2" style="margin-bottom: 14px;">
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #FFF;">Infraestrutura, Nuvem e Servidores</span>
-            <span style="font-size: 11px; font-weight: 700; color: var(--primary);">35% (R$ 87,5k)</span>
-          </div>
-          <p style="font-size: 10px;">Custos de servidores dedicados, CDN de streaming de alta velocidade, instâncias PostgreSQL, segurança de dados e manutenção contínua.</p>
-        </div>
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #FFF;">Marketing & Aquisição de Usuários</span>
-            <span style="font-size: 11px; font-weight: 700; color: var(--accent-green);">30% (R$ 75,0k)</span>
-          </div>
-          <p style="font-size: 10px;">Tráfego pago segmentado (Instagram, YouTube, Google), parcerias com influenciadores do meio sertanejo/pop e presença em eventos da indústria.</p>
-        </div>
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #FFF;">API de Distribuição (460+ DSPs)</span>
-            <span style="font-size: 11px; font-weight: 700; color: var(--secondary);">25% (R$ 62,5k)</span>
-          </div>
-          <p style="font-size: 10px;">Integração e homologação técnica junto aos hubs agregadores globais para envio automatizado de áudios e metadados ISRC.</p>
-        </div>
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #FFF;">Jurídico & Capital de Giro</span>
-            <span style="font-size: 11px; font-weight: 700; color: #94A3B8;">10% (R$ 25,0k)</span>
-          </div>
-          <p style="font-size: 10px;">Elaboração de contratos de vesting, conformidade com a LGPD, registro de marcas e reserva de liquidez operacional.</p>
-        </div>
-      </div>
-
-      <!-- Caixa de Fechamento / Próximos Passos -->
-      <div class="card highlight" style="text-align: center; padding: 14px;">
-        <h3 style="font-size: 13px; color: #FFF; font-weight: 700; margin-bottom: 4px;">Próximos Passos para Conclusão</h3>
-        <p style="font-size: 11px; margin-bottom: 10px;">
-          Demonstração do aplicativo em tempo real • Assinatura do Termo de Investimento (MÚTUO CONVERSÍVEL / EQUITY) • Integralização do Aporte.
-        </p>
-        <div style="font-size: 11px; font-weight: 700; color: var(--primary);">
-          PlayAuge MusicTech • Aplicação no ar: staysoft.online
-        </div>
-      </div>
-    </div>
-
-    <div class="page-footer">
-      <div>PlayAuge Tecnologia Musical Ltda. • Proposta Comercial & de Investimento</div>
-      <div>Página 4 de 4</div>
+    <!-- Footer -->
+    <div class="footer">
+      <div>PlayAuge Tecnologia Musical Ltda. • Proposta de Investimento e Expansão</div>
+      <div>Página 2 de 2</div>
     </div>
   </div>
 
